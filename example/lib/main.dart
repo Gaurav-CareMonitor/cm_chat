@@ -281,7 +281,7 @@ class _ChatScreenState extends State<ChatScreen> {
         id: id.toString(),
         createdAt: DateTime.now(),
         message: message,
-        sendBy: currentUser.id,
+        sendBy: ChatUser(id: currentUser.id, name: "name"),
         replyMessage: replyMessage,
         messageType: messageType,
       ),

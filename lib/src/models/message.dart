@@ -37,7 +37,7 @@ class Message {
   final DateTime createdAt;
 
   /// Provides id of sender of message.
-  final String sendBy;
+  final ChatUser sendBy;
 
   /// Provides reply message if user triggers any reply on any message.
   final ReplyMessage replyMessage;
@@ -95,7 +95,7 @@ class Message {
         message: json['message']?.toString() ?? '',
         createdAt:
             DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now(),
-        sendBy: json['sendBy']?.toString() ?? '',
+        sendBy: ChatUser.fromJson(json['sendBy']),
         replyMessage: json['reply_message'] is Map<String, dynamic>
             ? ReplyMessage.fromJson(json['reply_message'])
             : const ReplyMessage(),
@@ -129,7 +129,7 @@ class Message {
     GlobalKey? key,
     String? message,
     DateTime? createdAt,
-    String? sendBy,
+    ChatUser? sendBy,
     ReplyMessage? replyMessage,
     Reaction? reaction,
     MessageType? messageType,

@@ -99,7 +99,7 @@ class ChatBubbleWidget extends StatefulWidget {
 class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   String get replyMessage => widget.message.replyMessage.message;
 
-  bool get isMessageBySender => widget.message.sendBy == currentUser?.id;
+  bool get isMessageBySender => widget.message.sendBy.id == currentUser?.id;
 
   bool get isLastMessage =>
       chatController?.initialMessageList.last.id == widget.message.id;
@@ -124,7 +124,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   @override
   Widget build(BuildContext context) {
     // Get user from id.
-    final messagedUser = chatController?.getUserFromId(widget.message.sendBy);
+    final messagedUser = widget.message.sendBy;
     return Stack(
       children: [
         if (featureActiveConfig?.enableSwipeToSeeTime ?? true) ...[
@@ -321,6 +321,19 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             child: Text(
               messagedUser?.name ?? '',
               style: widget.chatBubbleConfig?.inComingChatBubbleConfig
+                  ?.senderNameTextStyle,
+            ),
+          ),
+        if ((chatController?.chatUsers.length ?? 0) > 1 &&
+            isMessageBySender &&
+            (featureActiveConfig?.enableCurrentUserName ?? false))
+          Padding(
+            padding:
+                widget.chatBubbleConfig?.outgoingChatBubbleConfig?.padding ??
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Text(
+              messagedUser?.name ?? '',
+              style: widget.chatBubbleConfig?.outgoingChatBubbleConfig
                   ?.senderNameTextStyle,
             ),
           ),

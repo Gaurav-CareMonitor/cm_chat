@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import '../values/enumeration.dart';
+import 'package:chatview/chatview.dart';
 
 class ReplyMessage {
   /// Provides reply message.
@@ -29,7 +29,7 @@ class ReplyMessage {
   final String replyBy;
 
   /// Provides user id of whom to reply.
-  final String replyTo;
+  final ChatUser? replyTo;
   final MessageType messageType;
 
   /// Provides max duration for recorded voice message.
@@ -41,7 +41,7 @@ class ReplyMessage {
   const ReplyMessage({
     this.messageId = '',
     this.message = '',
-    this.replyTo = '',
+    this.replyTo,
     this.replyBy = '',
     this.messageType = MessageType.text,
     this.voiceMessageDuration,
@@ -50,7 +50,7 @@ class ReplyMessage {
   factory ReplyMessage.fromJson(Map<String, dynamic> json) => ReplyMessage(
         message: json['message']?.toString() ?? '',
         replyBy: json['replyBy']?.toString() ?? '',
-        replyTo: json['replyTo']?.toString() ?? '',
+        replyTo: ChatUser.fromJson(json['replyTo'] ?? {}),
         messageType: MessageType.tryParse(json['message_type']?.toString()) ??
             MessageType.text,
         messageId: json['id']?.toString() ?? '',
@@ -72,7 +72,7 @@ class ReplyMessage {
   ReplyMessage copyWith({
     String? messageId,
     String? message,
-    String? replyTo,
+    ChatUser? replyTo,
     String? replyBy,
     MessageType? messageType,
     Duration? voiceMessageDuration,

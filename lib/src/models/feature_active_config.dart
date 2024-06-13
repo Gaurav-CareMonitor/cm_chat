@@ -13,6 +13,7 @@ class FeatureActiveConfig {
     this.lastSeenAgoBuilderVisibility = true,
     this.receiptsBuilderVisibility = true,
     this.enableOtherUserName = true,
+    this.enableCurrentUserName = false,
   });
 
   /// Used for enable/disable swipe to reply.
@@ -53,4 +54,6 @@ class FeatureActiveConfig {
 
   /// Used for enable/disable other users name.
   final bool enableOtherUserName;
+
+  final bool enableCurrentUserName;
 }
