@@ -38,6 +38,9 @@ class MessageConfiguration {
   /// Provides builder to create view for custom messages.
   final Widget Function(Message)? customMessageBuilder;
 
+  /// Provides builder to create view for custom messages.
+  final Widget Function(ChatAttachment)? customAttachmentBuilder;
+
   /// Configurations for voice message bubble
   final VoiceMessageConfiguration? voiceMessageConfig;
 
@@ -51,5 +54,6 @@ class MessageConfiguration {
     this.customMessageBuilder,
     this.voiceMessageConfig,
     this.customMessageReplyViewBuilder,
+    this.customAttachmentBuilder,
   });
 }

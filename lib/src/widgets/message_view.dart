@@ -20,14 +20,14 @@
  * SOFTWARE.
  */
 import 'package:chatview/chatview.dart';
+import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
 import 'package:flutter/material.dart';
 
-import 'package:chatview/src/extensions/extensions.dart';
 import '../utils/constants/constants.dart';
 import 'image_message_view.dart';
-import 'text_message_view.dart';
 import 'reaction_widget.dart';
+import 'text_message_view.dart';
 import 'voice_message_view.dart';
 
 class MessageView extends StatefulWidget {
@@ -218,6 +218,51 @@ class _MessageViewState extends State<MessageView>
                     messageReactionConfig: messageConfig?.messageReactionConfig,
                     highlightColor: widget.highlightColor,
                     highlightMessage: widget.shouldHighlight,
+                    children: [
+                      ...widget.message.attachments
+                          .map((e) => (
+                                e,
+                                Message(
+                                    message: e.url,
+                                    createdAt: DateTime.now(),
+                                    sendBy: widget.message.sendBy,
+                                    messageType:
+                                        MessageType.fromMediaType(e.mediaType))
+                              ))
+                          .map((e) {
+                        switch (e.$2.messageType) {
+                          case MessageType.image:
+                            return ImageMessageView(
+                              message: e.$2,
+                              isMessageBySender: widget.isMessageBySender,
+                              imageMessageConfig:
+                                  messageConfig?.imageMessageConfig,
+                              messageReactionConfig:
+                                  messageConfig?.messageReactionConfig,
+                              highlightImage: widget.shouldHighlight,
+                              highlightScale: widget.highlightScale,
+                            );
+                          case MessageType.voice:
+                            return VoiceMessageView(
+                              screenWidth: MediaQuery.of(context).size.width,
+                              message: e.$2,
+                              config: messageConfig?.voiceMessageConfig,
+                              onMaxDuration: widget.onMaxDuration,
+                              isMessageBySender: widget.isMessageBySender,
+                              messageReactionConfig:
+                                  messageConfig?.messageReactionConfig,
+                              inComingChatBubbleConfig:
+                                  widget.inComingChatBubbleConfig,
+                              outgoingChatBubbleConfig:
+                                  widget.outgoingChatBubbleConfig,
+                            );
+                          default:
+                            return messageConfig?.customAttachmentBuilder
+                                    ?.call(e.$1) ??
+                                const SizedBox();
+                        }
+                      }),
+                    ],
                   );
                 } else if (widget.message.messageType.isVoice) {
                   return VoiceMessageView(
