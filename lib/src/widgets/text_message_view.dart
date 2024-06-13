@@ -80,50 +80,51 @@ class TextMessageView extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            Container(
-              constraints: BoxConstraints(
-                  maxWidth: chatBubbleMaxWidth ??
-                      MediaQuery.of(context).size.width * 0.75),
-              padding: _padding ??
-                  const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-              margin: _margin ??
-                  EdgeInsets.fromLTRB(
-                      5, 0, 6, message.reaction.reactions.isNotEmpty ? 15 : 2),
-              decoration: BoxDecoration(
-                color: highlightMessage ? highlightColor : _color,
-                borderRadius: _borderRadius(textMessage),
-              ),
-              child: textMessage.isUrl
-                  ? LinkPreview(
-                      linkPreviewConfig: _linkPreviewConfig,
-                      url: textMessage,
-                    )
-                  : Linkify(
-                      textScaleFactor:
-                          MediaQuery.of(context).textScaler.scale(1),
-                      text: textMessage,
-                      linkStyle: _linkStyle ??
-                          textTheme.bodyMedium!.copyWith(
-                            color: Colors.white,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline,
-                          ),
-                      onOpen: (e) {},
-                      style: _textStyle ??
-                          textTheme.bodyMedium!.copyWith(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                      options: const LinkifyOptions(
-                        humanize: true,
-                        removeWww: true,
-                        looseUrl: false,
-                      ),
+            if (textMessage.isNotEmpty)
+              Container(
+                constraints: BoxConstraints(
+                    maxWidth: chatBubbleMaxWidth ??
+                        MediaQuery.of(context).size.width * 0.75),
+                padding: _padding ??
+                    const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
                     ),
-            ),
+                margin: _margin ??
+                    EdgeInsets.fromLTRB(5, 0, 6,
+                        message.reaction.reactions.isNotEmpty ? 15 : 2),
+                decoration: BoxDecoration(
+                  color: highlightMessage ? highlightColor : _color,
+                  borderRadius: _borderRadius(textMessage),
+                ),
+                child: textMessage.isUrl
+                    ? LinkPreview(
+                        linkPreviewConfig: _linkPreviewConfig,
+                        url: textMessage,
+                      )
+                    : Linkify(
+                        textScaleFactor:
+                            MediaQuery.of(context).textScaler.scale(1),
+                        text: textMessage,
+                        linkStyle: _linkStyle ??
+                            textTheme.bodyMedium!.copyWith(
+                              color: Colors.white,
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
+                            ),
+                        onOpen: (e) {},
+                        style: _textStyle ??
+                            textTheme.bodyMedium!.copyWith(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                        options: const LinkifyOptions(
+                          humanize: true,
+                          removeWww: true,
+                          looseUrl: false,
+                        ),
+                      ),
+              ),
             if (message.reaction.reactions.isNotEmpty)
               ReactionWidget(
                 key: key,
