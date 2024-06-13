@@ -19,14 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'dart:io' if (kIsWeb) 'dart:html';
-
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/utils/package_strings.dart';
 import 'package:chatview/src/widgets/chatui_textfield.dart';
 import 'package:chatview/src/widgets/reply_message_view.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../utils/constants/constants.dart';
@@ -112,140 +109,117 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
           )
         : Align(
             alignment: Alignment.bottomCenter,
-            child: SizedBox(
+            child: Container(
+              color: widget.sendMessageConfig?.backgroundColor,
               width: MediaQuery.of(context).size.width,
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    left: 0,
-                    bottom: 0,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height /
-                          ((!kIsWeb && Platform.isIOS) ? 24 : 28),
-                      color: widget.backgroundColor ?? Colors.white,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      bottomPadding4,
-                      bottomPadding4,
-                      bottomPadding4,
-                      _bottomPadding,
-                    ),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        ValueListenableBuilder<ReplyMessage>(
-                          builder: (_, state, child) {
-                            final replyTitle =
-                                "${PackageStrings.replyTo} $_replyTo";
-                            if (state.message.isNotEmpty) {
-                              return widget.replyMessageBuilder
-                                      ?.call(context, state) ??
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: widget.sendMessageConfig
-                                              ?.textFieldBackgroundColor ??
-                                          Colors.white,
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(14),
-                                      ),
-                                    ),
-                                    margin: const EdgeInsets.only(
-                                      bottom: 17,
-                                      right: 0.4,
-                                      left: 0.4,
-                                    ),
-                                    padding: const EdgeInsets.fromLTRB(
-                                      leftPadding,
-                                      leftPadding,
-                                      leftPadding,
-                                      30,
-                                    ),
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 2),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 4,
-                                        horizontal: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: widget.sendMessageConfig
-                                                ?.replyDialogColor ??
-                                            Colors.grey.shade200,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
+              child: SafeArea(
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    ValueListenableBuilder<ReplyMessage>(
+                      builder: (_, state, child) {
+                        final replyTitle =
+                            "${PackageStrings.replyTo} $_replyTo";
+                        if (state.message.isNotEmpty) {
+                          return widget.replyMessageBuilder
+                                  ?.call(context, state) ??
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: widget.sendMessageConfig
+                                          ?.textFieldBackgroundColor ??
+                                      Colors.white,
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(14),
+                                  ),
+                                ),
+                                margin: const EdgeInsets.only(
+                                  bottom: 17,
+                                  right: 0.4,
+                                  left: 0.4,
+                                ),
+                                padding: const EdgeInsets.fromLTRB(
+                                  leftPadding,
+                                  leftPadding,
+                                  leftPadding,
+                                  30,
+                                ),
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                    horizontal: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: widget.sendMessageConfig
+                                            ?.replyDialogColor ??
+                                        Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  replyTitle,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: widget
-                                                            .sendMessageConfig
-                                                            ?.replyTitleColor ??
-                                                        Colors.deepPurple,
-                                                    fontWeight: FontWeight.bold,
-                                                    letterSpacing: 0.25,
-                                                  ),
-                                                ),
+                                          Expanded(
+                                            child: Text(
+                                              replyTitle,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: widget.sendMessageConfig
+                                                        ?.replyTitleColor ??
+                                                    Colors.deepPurple,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.25,
                                               ),
-                                              IconButton(
-                                                constraints:
-                                                    const BoxConstraints(),
-                                                padding: EdgeInsets.zero,
-                                                icon: Icon(
-                                                  Icons.close,
-                                                  color: widget
-                                                          .sendMessageConfig
-                                                          ?.closeIconColor ??
-                                                      Colors.black,
-                                                  size: 16,
-                                                ),
-                                                onPressed: onCloseTap,
-                                              ),
-                                            ],
+                                            ),
                                           ),
-                                          ReplyMessageView(
-                                            message: state,
-                                            customMessageReplyViewBuilder: widget
-                                                .messageConfig
-                                                ?.customMessageReplyViewBuilder,
-                                            sendMessageConfig:
-                                                widget.sendMessageConfig,
+                                          IconButton(
+                                            constraints: const BoxConstraints(),
+                                            padding: EdgeInsets.zero,
+                                            icon: Icon(
+                                              Icons.close,
+                                              color: widget.sendMessageConfig
+                                                      ?.closeIconColor ??
+                                                  Colors.black,
+                                              size: 16,
+                                            ),
+                                            onPressed: onCloseTap,
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  );
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          },
-                          valueListenable: _replyMessage,
-                        ),
-                        ChatUITextField(
-                          focusNode: _focusNode,
-                          textEditingController: _textEditingController,
-                          onPressed: _onPressed,
-                          sendMessageConfig: widget.sendMessageConfig,
-                          onRecordingComplete: _onRecordingComplete,
-                          onImageSelected: _onImageSelected,
-                        )
-                      ],
+                                      ReplyMessageView(
+                                        message: state,
+                                        customMessageReplyViewBuilder: widget
+                                            .messageConfig
+                                            ?.customMessageReplyViewBuilder,
+                                        sendMessageConfig:
+                                            widget.sendMessageConfig,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                      valueListenable: _replyMessage,
                     ),
-                  ),
-                ],
+                    ChatUITextField(
+                      focusNode: _focusNode,
+                      textEditingController: _textEditingController,
+                      onPressed: _onPressed,
+                      sendMessageConfig: widget.sendMessageConfig,
+                      onRecordingComplete: _onRecordingComplete,
+                      onImageSelected: _onImageSelected,
+                    )
+                  ],
+                ),
               ),
             ),
           );
@@ -304,14 +278,6 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
     _replyMessage.value = const ReplyMessage();
     if (widget.onReplyCloseCallback != null) widget.onReplyCloseCallback!();
   }
-
-  double get _bottomPadding => (!kIsWeb && Platform.isIOS)
-      ? (_focusNode.hasFocus
-          ? bottomPadding1
-          : View.of(context).viewPadding.bottom > 0
-              ? bottomPadding2
-              : bottomPadding3)
-      : bottomPadding3;
 
   @override
   void dispose() {

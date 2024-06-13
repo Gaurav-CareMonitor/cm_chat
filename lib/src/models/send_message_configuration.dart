@@ -71,6 +71,8 @@ class SendMessageConfiguration {
   /// Color of mic icon when replying to some voice message.
   final Color? micIconColor;
 
+  final Color? backgroundColor;
+
   /// Styling configuration for recorder widget.
   final VoiceRecordingConfiguration? voiceRecordingConfiguration;
 
@@ -85,6 +87,7 @@ class SendMessageConfiguration {
     this.defaultSendButtonColor,
     this.sendButtonIcon,
     this.replyDialogColor,
+    this.backgroundColor,
     this.replyTitleColor,
     this.replyMessageColor,
     this.closeIconColor,
