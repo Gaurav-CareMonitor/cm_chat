@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 import 'package:flutter/material.dart';
+
 import '../../chatview.dart';
 
 class ChatBubble {
@@ -31,6 +32,8 @@ class ChatBubble {
 
   /// Used for giving text style of chat bubble.
   final TextStyle? textStyle;
+
+  final TextStyle? linkStyle;
 
   /// Used for giving padding of chat bubble.
   final EdgeInsetsGeometry? padding;
@@ -56,6 +59,7 @@ class ChatBubble {
     this.color,
     this.borderRadius,
     this.textStyle,
+    this.linkStyle,
     this.padding,
     this.margin,
     this.linkPreviewConfig,

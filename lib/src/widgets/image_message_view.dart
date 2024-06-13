@@ -36,9 +36,17 @@ class ImageMessageView extends StatelessWidget {
     required this.isMessageBySender,
     this.imageMessageConfig,
     this.messageReactionConfig,
+    this.inComingChatBubbleConfig,
+    this.outgoingChatBubbleConfig,
     this.highlightImage = false,
     this.highlightScale = 1.2,
   }) : super(key: key);
+
+  /// Provides configuration of chat bubble appearance from other user of chat.
+  final ChatBubble? inComingChatBubbleConfig;
+
+  /// Provides configuration of chat bubble appearance from current user of chat.
+  final ChatBubble? outgoingChatBubbleConfig;
 
   /// Provides message instance of chat.
   final Message message;
@@ -65,6 +73,10 @@ class ImageMessageView extends StatelessWidget {
         imageUrl: imageUrl,
       );
 
+  Color get _color => isMessageBySender
+      ? outgoingChatBubbleConfig?.color ?? Colors.purple
+      : inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -85,7 +97,8 @@ class ImageMessageView extends StatelessWidget {
                     ? Alignment.centerRight
                     : Alignment.centerLeft,
                 child: Container(
-                  padding: imageMessageConfig?.padding ?? EdgeInsets.zero,
+                  padding:
+                      imageMessageConfig?.padding ?? const EdgeInsets.all(5),
                   margin: imageMessageConfig?.margin ??
                       EdgeInsets.only(
                         top: 6,
@@ -95,6 +108,12 @@ class ImageMessageView extends StatelessWidget {
                       ),
                   height: imageMessageConfig?.height ?? 200,
                   width: imageMessageConfig?.width ?? 150,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: _color,
+                    borderRadius: imageMessageConfig?.borderRadius ??
+                        BorderRadius.circular(16),
+                  ),
                   child: ClipRRect(
                     borderRadius: imageMessageConfig?.borderRadius ??
                         BorderRadius.circular(14),

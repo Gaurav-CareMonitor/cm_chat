@@ -201,6 +201,8 @@ class _MessageViewState extends State<MessageView>
                   );
                 } else if (widget.message.messageType.isImage) {
                   return ImageMessageView(
+                    inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
+                    outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,
                     message: widget.message,
                     isMessageBySender: widget.isMessageBySender,
                     imageMessageConfig: messageConfig?.imageMessageConfig,
@@ -241,6 +243,10 @@ class _MessageViewState extends State<MessageView>
                                   messageConfig?.messageReactionConfig,
                               highlightImage: widget.shouldHighlight,
                               highlightScale: widget.highlightScale,
+                              inComingChatBubbleConfig:
+                                  widget.inComingChatBubbleConfig,
+                              outgoingChatBubbleConfig:
+                                  widget.outgoingChatBubbleConfig,
                             );
                           case MessageType.voice:
                             return VoiceMessageView(
@@ -258,7 +264,7 @@ class _MessageViewState extends State<MessageView>
                             );
                           default:
                             return messageConfig?.customAttachmentBuilder
-                                    ?.call(e.$1) ??
+                                    ?.call(e.$1, e.$2) ??
                                 const SizedBox();
                         }
                       }),

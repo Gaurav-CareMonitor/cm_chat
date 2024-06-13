@@ -22,6 +22,7 @@
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:linkify_plus/linkify_plus.dart';
 
 import '../utils/constants/constants.dart';
 import 'link_preview.dart';
@@ -100,13 +101,27 @@ class TextMessageView extends StatelessWidget {
                       linkPreviewConfig: _linkPreviewConfig,
                       url: textMessage,
                     )
-                  : Text(
-                      textMessage,
+                  : Linkify(
+                      textScaleFactor:
+                          MediaQuery.of(context).textScaler.scale(1),
+                      text: textMessage,
+                      linkStyle: _linkStyle ??
+                          textTheme.bodyMedium!.copyWith(
+                            color: Colors.white,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                          ),
+                      onOpen: (e) {},
                       style: _textStyle ??
                           textTheme.bodyMedium!.copyWith(
                             color: Colors.white,
                             fontSize: 16,
                           ),
+                      options: const LinkifyOptions(
+                        humanize: true,
+                        removeWww: true,
+                        looseUrl: false,
+                      ),
                     ),
             ),
             if (message.reaction.reactions.isNotEmpty)
@@ -137,6 +152,10 @@ class TextMessageView extends StatelessWidget {
   TextStyle? get _textStyle => isMessageBySender
       ? outgoingChatBubbleConfig?.textStyle
       : inComingChatBubbleConfig?.textStyle;
+
+  TextStyle? get _linkStyle => isMessageBySender
+      ? outgoingChatBubbleConfig?.linkStyle
+      : inComingChatBubbleConfig?.linkStyle;
 
   BorderRadiusGeometry _borderRadius(String message) => isMessageBySender
       ? outgoingChatBubbleConfig?.borderRadius ??

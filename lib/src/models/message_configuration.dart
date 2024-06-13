@@ -39,7 +39,7 @@ class MessageConfiguration {
   final Widget Function(Message)? customMessageBuilder;
 
   /// Provides builder to create view for custom messages.
-  final Widget Function(ChatAttachment)? customAttachmentBuilder;
+  final Widget Function(ChatAttachment, Message)? customAttachmentBuilder;
 
   /// Configurations for voice message bubble
   final VoiceMessageConfiguration? voiceMessageConfig;
