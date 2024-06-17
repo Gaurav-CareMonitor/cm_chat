@@ -212,6 +212,7 @@ class _MessageViewState extends State<MessageView>
                   );
                 } else if (widget.message.messageType.isText) {
                   return TextMessageView(
+                    messageConfig: messageConfig,
                     inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
                     outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,
                     isMessageBySender: widget.isMessageBySender,

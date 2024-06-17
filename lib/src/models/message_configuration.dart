@@ -47,6 +47,8 @@ class MessageConfiguration {
   /// To customize reply view for custom message type
   final CustomMessageReplyViewBuilder? customMessageReplyViewBuilder;
 
+  final void Function(String)? onUrlTap;
+
   const MessageConfiguration({
     this.imageMessageConfig,
     this.messageReactionConfig,
@@ -55,5 +57,6 @@ class MessageConfiguration {
     this.voiceMessageConfig,
     this.customMessageReplyViewBuilder,
     this.customAttachmentBuilder,
+    this.onUrlTap,
   });
 }

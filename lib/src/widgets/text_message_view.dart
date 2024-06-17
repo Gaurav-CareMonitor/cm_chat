@@ -39,6 +39,7 @@ class TextMessageView extends StatelessWidget {
     this.messageReactionConfig,
     this.highlightMessage = false,
     this.highlightColor,
+    required this.messageConfig,
     this.children = const [],
   }) : super(key: key);
 
@@ -67,6 +68,8 @@ class TextMessageView extends StatelessWidget {
   final Color? highlightColor;
 
   final List<Widget> children;
+
+  final MessageConfiguration? messageConfig;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +115,7 @@ class TextMessageView extends StatelessWidget {
                               fontSize: 16,
                               decoration: TextDecoration.underline,
                             ),
-                        onOpen: (e) {},
+                        onOpen: (e) => messageConfig?.onUrlTap?.call(e.url),
                         style: _textStyle ??
                             textTheme.bodyMedium!.copyWith(
                               color: Colors.white,
