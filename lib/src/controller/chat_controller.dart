@@ -105,6 +105,8 @@ class ChatController {
       reaction: message.reaction,
       messageType: message.messageType,
       status: message.status,
+      attachments: message.attachments,
+      hint: message.hint,
     );
     messageStreamController.sink.add(initialMessageList);
   }

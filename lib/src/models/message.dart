@@ -53,6 +53,9 @@ class Message {
 
   final List<ChatAttachment> attachments;
 
+  // hint is visible at bottom of message
+  final String? hint;
+
   /// Provides max duration for recorded voice message.
   Duration? voiceMessageDuration;
 
@@ -61,6 +64,7 @@ class Message {
       required this.message,
       required this.createdAt,
       required this.sendBy,
+      this.hint,
       this.replyMessage = const ReplyMessage(),
       Reaction? reaction,
       this.messageType = MessageType.text,
@@ -139,6 +143,7 @@ class Message {
     Duration? voiceMessageDuration,
     MessageStatus? status,
     bool forceNullValue = false,
+    String? hint,
   }) {
     return Message(
       id: id ?? this.message,
@@ -152,6 +157,7 @@ class Message {
       reaction: reaction ?? this.reaction,
       replyMessage: replyMessage ?? this.replyMessage,
       status: status ?? this.status,
+      hint: hint ?? this.hint,
     );
   }
 }
