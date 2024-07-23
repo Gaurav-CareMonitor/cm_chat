@@ -81,6 +81,7 @@ class TextMessageView extends StatelessWidget {
       crossAxisAlignment:
           isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
+        ...children,
         Stack(
           alignment: Alignment.bottomRight,
           clipBehavior: Clip.none,
