@@ -84,7 +84,6 @@ class ImageMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment:
@@ -173,20 +172,20 @@ class ImageMessageView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Visibility(
-                    visible: false,
-                    maintainAnimation: true,
-                    maintainSize: true,
-                    maintainState: true,
-                    child: _wBottom(textTheme),
-                  ),
+                  // Visibility(
+                  //   visible: false,
+                  //   maintainAnimation: true,
+                  //   maintainSize: true,
+                  //   maintainState: true,
+                  //   child: _wBottom(textTheme),
+                  // ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              child: _wBottom(textTheme),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            //   child: _wBottom(textTheme),
+            // ),
             if (message.reaction.reactions.isNotEmpty)
               ReactionWidget(
                 isMessageBySender: isMessageBySender,

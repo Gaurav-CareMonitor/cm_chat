@@ -147,7 +147,7 @@ class TextMessageView extends StatelessWidget {
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: _wBottom(textTheme),
             ),
             if (message.reaction.reactions.isNotEmpty)
