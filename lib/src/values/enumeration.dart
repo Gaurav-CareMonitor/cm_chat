@@ -21,7 +21,8 @@
  */
 
 // Different types Message of ChatView
-import 'package:chatview/src/models/attachment.dart';
+
+import 'package:flutter/material.dart';
 
 enum MessageType {
   image,
@@ -30,17 +31,6 @@ enum MessageType {
   /// Only supported on android and ios
   voice,
   custom;
-
-  static MessageType fromMediaType(MediaType type) {
-    switch (type) {
-      case MediaType.image:
-        return image;
-      case MediaType.audio:
-        return voice;
-      default:
-        return custom;
-    }
-  }
 
   static MessageType? tryParse(String? value) {
     final type = value?.trim().toLowerCase();
@@ -116,6 +106,16 @@ enum ImageType {
   }
 }
 
+enum SuggestionListAlignment {
+  left(Alignment.bottomLeft),
+  center(Alignment.bottomCenter),
+  right(Alignment.bottomRight);
+
+  const SuggestionListAlignment(this.alignment);
+
+  final Alignment alignment;
+}
+
 extension ChatViewStateExtension on ChatViewState {
   bool get hasMessages => this == ChatViewState.hasMessages;
 
@@ -132,4 +132,14 @@ extension GroupedListOrderExtension on GroupedListOrder {
   bool get isAsc => this == GroupedListOrder.asc;
 
   bool get isDesc => this == GroupedListOrder.desc;
+}
+
+enum ScrollButtonAlignment {
+  left(Alignment.bottomLeft),
+  center(Alignment.bottomCenter),
+  right(Alignment.bottomRight);
+
+  const ScrollButtonAlignment(this.alignment);
+
+  final Alignment alignment;
 }

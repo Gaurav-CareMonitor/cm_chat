@@ -55,16 +55,15 @@ class ChatBubble {
   /// time only
   final Function(Message message)? onMessageRead;
 
-  const ChatBubble({
-    this.color,
-    this.borderRadius,
-    this.textStyle,
-    this.linkStyle,
-    this.padding,
-    this.margin,
-    this.linkPreviewConfig,
-    this.senderNameTextStyle,
-    this.receiptsWidgetConfig,
-    this.onMessageRead,
-  });
+  const ChatBubble(
+      {this.color,
+      this.borderRadius,
+      this.textStyle,
+      this.padding,
+      this.margin,
+      this.linkPreviewConfig,
+      this.senderNameTextStyle,
+      this.receiptsWidgetConfig,
+      this.onMessageRead,
+      this.linkStyle});
 }

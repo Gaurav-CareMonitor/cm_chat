@@ -19,150 +19,103 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import 'package:chatview/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'reply_icon.dart';
 
 class SwipeToReply extends StatefulWidget {
   const SwipeToReply({
     Key? key,
-    this.onLeftSwipe,
+    required this.onSwipe,
     required this.child,
-    this.replyIconColor,
-    this.onRightSwipe,
-    this.swipeToReplyAnimationDuration,
+    this.isMessageByCurrentUser = true,
   }) : super(key: key);
 
-  /// Provides callback when user swipes chat bubble from right side.
-  final VoidCallback? onRightSwipe;
-
   /// Provides callback when user swipes chat bubble from left side.
-  final VoidCallback? onLeftSwipe;
+  final VoidCallback onSwipe;
 
   /// Allow user to set widget which is showed while user swipes chat bubble.
   final Widget child;
 
-  /// Allow user to change colour of reply icon which is showed while user swipes.
-  final Color? replyIconColor;
-
-  /// Allow user to set duration of animation of icon.
-  final Duration? swipeToReplyAnimationDuration;
+  /// A boolean variable that indicates if the message is sent by the current user.
+  ///
+  /// This is `true` if the message is authored by the sender (the current user),
+  /// and `false` if it is authored by someone else.
+  final bool isMessageByCurrentUser;
 
   @override
   State<SwipeToReply> createState() => _SwipeToReplyState();
 }
 
-class _SwipeToReplyState extends State<SwipeToReply>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late Animation<double> _leftScaleAnimation;
-  late Animation<double> _rightScaleAnimation;
-  late Animation<Offset> _slideAnimation;
+class _SwipeToReplyState extends State<SwipeToReply> {
+  double paddingValue = 0;
+  double trackPaddingValue = 0;
+  double initialTouchPoint = 0;
+  bool isCallBackTriggered = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeAnimationControllers();
-  }
+  late bool isMessageByCurrentUser = widget.isMessageByCurrentUser;
 
-  void _initializeAnimationControllers() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.swipeToReplyAnimationDuration ??
-          const Duration(milliseconds: 250),
-    );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.0),
-      end: const Offset(0.0, 0.0),
-    ).animate(CurvedAnimation(curve: Curves.decelerate, parent: _controller));
-    _leftScaleAnimation = _controller.drive(
-      Tween<double>(begin: 0.0, end: 0.0),
-    );
-    _rightScaleAnimation = _controller.drive(
-      Tween<double>(begin: 0.0, end: 0.0),
-    );
-  }
+  final paddingLimit = 50;
+  final double replyIconSize = 25;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: _onHorizontalDragUpdate,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Stack(
-            alignment: Alignment.center,
-            fit: StackFit.passthrough,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Visibility(
-                    visible: widget.onRightSwipe != null,
-                    child: ReplyIcon(
-                      scaleAnimation: _leftScaleAnimation,
-                      slideAnimation: _slideAnimation,
-                      replyIconColor: widget.replyIconColor,
-                    ),
+    return !(chatViewIW?.featureActiveConfig.enableSwipeToReply ?? true)
+        ? widget.child
+        : GestureDetector(
+            onHorizontalDragStart: (details) =>
+                initialTouchPoint = details.globalPosition.dx,
+            onHorizontalDragEnd: (details) => setState(
+              () {
+                paddingValue = 0;
+                isCallBackTriggered = false;
+              },
+            ),
+            onHorizontalDragUpdate: _onHorizontalDragUpdate,
+            child: Stack(
+              alignment: isMessageByCurrentUser
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+              fit: StackFit.passthrough,
+              children: [
+                ReplyIcon(
+                  replyIconSize: replyIconSize,
+                  animationValue: paddingValue > replyIconSize
+                      ? (paddingValue) / (paddingLimit)
+                      : 0.0,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    right: isMessageByCurrentUser ? paddingValue : 0,
+                    left: isMessageByCurrentUser ? 0 : paddingValue,
                   ),
-                  Visibility(
-                    visible: widget.onLeftSwipe != null,
-                    child: ReplyIcon(
-                      scaleAnimation: _rightScaleAnimation,
-                      slideAnimation: _slideAnimation,
-                      replyIconColor: widget.replyIconColor,
-                    ),
-                  ),
-                ],
-              ),
-              SlideTransition(
-                position: _slideAnimation,
-                child: widget.child,
-              ),
-            ],
+                  child: widget.child,
+                ),
+              ],
+            ),
           );
-        },
-      ),
-    );
   }
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
-    if (widget.onRightSwipe != null && details.delta.dx > 1) {
-      _runAnimation(onRight: true);
-    }
-    if (widget.onLeftSwipe != null && details.delta.dx < -1) {
-      _runAnimation(onRight: false);
-    }
-  }
-
-  void _runAnimation({required bool onRight}) {
-    _slideAnimation = Tween(
-      begin: const Offset(0.0, 0.0),
-      end: Offset(onRight ? 0.1 : -0.1, 0.0),
-    ).animate(CurvedAnimation(curve: Curves.decelerate, parent: _controller));
-    if (onRight) {
-      _leftScaleAnimation = Tween(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(curve: Curves.decelerate, parent: _controller));
-    } else {
-      _rightScaleAnimation = Tween(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(curve: Curves.decelerate, parent: _controller));
-    }
-    _controller.forward().whenComplete(() {
-      _controller.reverse().whenComplete(() {
-        if (onRight) {
-          _leftScaleAnimation = _controller.drive(Tween(begin: 0.0, end: 0.0));
-          if (widget.onRightSwipe != null) widget.onRightSwipe!();
-        } else {
-          _rightScaleAnimation = _controller.drive(Tween(begin: 0.0, end: 0.0));
-          if (widget.onLeftSwipe != null) widget.onLeftSwipe!();
-        }
+    final swipeDistance = isMessageByCurrentUser
+        ? (initialTouchPoint - details.globalPosition.dx)
+        : (details.globalPosition.dx - initialTouchPoint);
+    if (swipeDistance >= 0 && trackPaddingValue < paddingLimit) {
+      setState(() {
+        paddingValue = swipeDistance;
       });
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    } else if (paddingValue >= paddingLimit) {
+      if (!isCallBackTriggered) {
+        widget.onSwipe();
+        isCallBackTriggered = true;
+      }
+    } else {
+      setState(() {
+        paddingValue = 0;
+      });
+    }
+    trackPaddingValue = swipeDistance;
   }
 }

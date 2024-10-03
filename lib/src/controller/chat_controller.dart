@@ -21,6 +21,8 @@
  */
 import 'dart:async';
 
+import 'package:chatview/src/widgets/suggestions/suggestion_list.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
@@ -40,7 +42,20 @@ class ChatController {
   ///    chatcontroller.typingIndicatorNotifier.addListener((){});
   ///  ```
   /// For more functionalities see [ValueNotifier].
-  ValueNotifier<bool> get typingIndicatorNotifier => _showTypingIndicator;
+  ValueListenable<bool> get typingIndicatorNotifier => _showTypingIndicator;
+
+  /// Allow user to add reply suggestions defaults to empty.
+  final ValueNotifier<List<SuggestionItemData>> _replySuggestion =
+      ValueNotifier([]);
+
+  /// newSuggestions as [ValueNotifier] for [SuggestionList] widget's [ValueListenableBuilder].
+  ///  Use this to listen when suggestion gets added
+  ///   ```dart
+  ///    chatcontroller.newSuggestions.addListener((){});
+  ///  ```
+  /// For more functionalities see [ValueNotifier].
+  ValueListenable<List<SuggestionItemData>> get newSuggestions =>
+      _replySuggestion;
 
   /// Getter for typingIndicator value instead of accessing [_showTypingIndicator.value]
   /// for better accessibility.
@@ -54,24 +69,45 @@ class ChatController {
   set setTypingIndicator(bool value) => _showTypingIndicator.value = value;
 
   /// Represents list of chat users
-  List<ChatUser> chatUsers;
+  List<ChatUser> otherUsers;
+
+  /// Provides current user which is sending messages.
+  final ChatUser currentUser;
 
   ChatController({
     required this.initialMessageList,
     required this.scrollController,
-    required this.chatUsers,
+    required this.otherUsers,
+    required this.currentUser,
   });
 
   /// Represents message stream of chat
   StreamController<List<Message>> messageStreamController = StreamController();
 
-  /// Used to dispose stream.
-  void dispose() => messageStreamController.close();
+  /// Used to dispose ValueNotifiers and Streams.
+  void dispose() {
+    _showTypingIndicator.dispose();
+    _replySuggestion.dispose();
+    scrollController.dispose();
+    messageStreamController.close();
+  }
 
   /// Used to add message in message list.
   void addMessage(Message message) {
     initialMessageList.add(message);
-    messageStreamController.sink.add(initialMessageList);
+    if (!messageStreamController.isClosed) {
+      messageStreamController.sink.add(initialMessageList);
+    }
+  }
+
+  /// Used to add reply suggestions.
+  void addReplySuggestions(List<SuggestionItemData> suggestions) {
+    _replySuggestion.value = suggestions;
+  }
+
+  /// Used to remove reply suggestions.
+  void removeReplySuggestions() {
+    _replySuggestion.value = [];
   }
 
   /// Function for setting reaction on specific chat bubble
@@ -100,35 +136,41 @@ class ChatController {
       id: messageId,
       message: message.message,
       createdAt: message.createdAt,
-      sendBy: message.sendBy,
+      sentBy: message.sentBy,
       replyMessage: message.replyMessage,
       reaction: message.reaction,
       messageType: message.messageType,
       status: message.status,
-      attachments: message.attachments,
-      hint: message.hint,
     );
-    messageStreamController.sink.add(initialMessageList);
+    if (!messageStreamController.isClosed) {
+      messageStreamController.sink.add(initialMessageList);
+    }
   }
 
   /// Function to scroll to last messages in chat view
   void scrollToLastMessage() => Timer(
         const Duration(milliseconds: 300),
-        () => scrollController.animateTo(
-          scrollController.position.minScrollExtent,
-          curve: Curves.easeIn,
-          duration: const Duration(milliseconds: 300),
-        ),
+        () {
+          if (!scrollController.hasClients) return;
+          scrollController.animateTo(
+            scrollController.position.minScrollExtent,
+            curve: Curves.easeIn,
+            duration: const Duration(milliseconds: 300),
+          );
+        },
       );
 
   /// Function for loading data while pagination.
   void loadMoreData(List<Message> messageList) {
     /// Here, we have passed 0 index as we need to add data before first data
     initialMessageList.insertAll(0, messageList);
-    messageStreamController.sink.add(initialMessageList);
+    if (!messageStreamController.isClosed) {
+      messageStreamController.sink.add(initialMessageList);
+    }
   }
 
   /// Function for getting ChatUser object from user id
-  ChatUser getUserFromId(String userId) =>
-      chatUsers.firstWhere((element) => element.id == userId);
+  ChatUser getUserFromId(String userId) => userId == currentUser.id
+      ? currentUser
+      : otherUsers.firstWhere((element) => element.id == userId);
 }

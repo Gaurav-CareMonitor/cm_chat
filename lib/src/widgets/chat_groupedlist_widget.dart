@@ -21,7 +21,7 @@
  */
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
+import 'package:chatview/src/widgets/suggestions/suggestion_list.dart';
 import 'package:chatview/src/widgets/type_indicator_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -32,49 +32,19 @@ class ChatGroupedListWidget extends StatefulWidget {
   const ChatGroupedListWidget({
     Key? key,
     required this.showPopUp,
-    required this.showTypingIndicator,
     required this.scrollController,
-    required this.chatBackgroundConfig,
     required this.replyMessage,
     required this.assignReplyMessage,
     required this.onChatListTap,
     required this.onChatBubbleLongPress,
     required this.isEnableSwipeToSeeTime,
-    this.messageConfig,
-    this.chatBubbleConfig,
-    this.profileCircleConfig,
-    this.swipeToReplyConfig,
-    this.repliedMessageConfig,
-    this.typeIndicatorConfig,
-    this.chatTextFieldTopPadding = 0,
   }) : super(key: key);
 
   /// Allow user to swipe to see time while reaction pop is not open.
   final bool showPopUp;
 
-  /// Allow user to show typing indicator.
-  final bool showTypingIndicator;
+  /// Pass scroll controller
   final ScrollController scrollController;
-
-  /// Allow user to give customisation to background of chat
-  final ChatBackgroundConfiguration chatBackgroundConfig;
-
-  /// Allow user to giving customisation different types
-  /// messages
-  final MessageConfiguration? messageConfig;
-
-  /// Allow user to giving customisation to chat bubble
-  final ChatBubbleConfiguration? chatBubbleConfig;
-
-  /// Allow user to giving customisation to profile circle
-  final ProfileCircleConfiguration? profileCircleConfig;
-
-  /// Allow user to giving customisation to swipe to reply
-  final SwipeToReplyConfiguration? swipeToReplyConfig;
-  final RepliedMessageConfiguration? repliedMessageConfig;
-
-  /// Allow user to giving customisation typing indicator
-  final TypeIndicatorConfiguration? typeIndicatorConfig;
 
   /// Provides reply message if actual message is sent by replying any message.
   final ReplyMessage replyMessage;
@@ -92,29 +62,17 @@ class ChatGroupedListWidget extends StatefulWidget {
   /// swipe whole chat.
   final bool isEnableSwipeToSeeTime;
 
-  /// Provides top padding of chat text field
-  final double chatTextFieldTopPadding;
-
   @override
   State<ChatGroupedListWidget> createState() => _ChatGroupedListWidgetState();
 }
 
 class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
     with TickerProviderStateMixin {
-  ChatBackgroundConfiguration get chatBackgroundConfig =>
-      widget.chatBackgroundConfig;
-
   bool get showPopUp => widget.showPopUp;
-
-  bool get showTypingIndicator => widget.showTypingIndicator;
 
   bool highlightMessage = false;
   final ValueNotifier<String?> _replyId = ValueNotifier(null);
 
-  ChatBubbleConfiguration? get chatBubbleConfig => widget.chatBubbleConfig;
-
-  ProfileCircleConfiguration? get profileCircleConfig =>
-      widget.profileCircleConfig;
   AnimationController? _animationController;
   Animation<Offset>? _slideAnimation;
 
@@ -124,10 +82,32 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
 
   bool get isEnableSwipeToSeeTime => widget.isEnableSwipeToSeeTime;
 
+  ChatBackgroundConfiguration get chatBackgroundConfig =>
+      chatListConfig.chatBackgroundConfig;
+
+  double chatTextFieldHeight = 0;
+
   @override
   void initState() {
     super.initState();
     _initializeAnimation();
+    updateChatTextFieldHeight();
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatGroupedListWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    updateChatTextFieldHeight();
+  }
+
+  void updateChatTextFieldHeight() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() {
+        chatTextFieldHeight =
+            chatViewIW?.chatTextFieldViewKey.currentContext?.size?.height ?? 10;
+      });
+    });
   }
 
   void _initializeAnimation() {
@@ -153,34 +133,34 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (provide != null) {
-      featureActiveConfig = provide!.featureActiveConfig;
-      chatController = provide!.chatController;
+    if (chatViewIW != null) {
+      featureActiveConfig = chatViewIW!.featureActiveConfig;
+      chatController = chatViewIW!.chatController;
     }
     _initializeAnimation();
   }
 
   @override
   Widget build(BuildContext context) {
+    final suggestionsListConfig =
+        suggestionsConfig?.listConfig ?? const SuggestionListConfig();
     return SingleChildScrollView(
       reverse: true,
       // When reaction popup is being appeared at that user should not scroll.
       physics: showPopUp ? const NeverScrollableScrollPhysics() : null,
-      padding: EdgeInsets.only(bottom: showTypingIndicator ? 50 : 0),
       controller: widget.scrollController,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           GestureDetector(
-            onHorizontalDragUpdate: (details) => isEnableSwipeToSeeTime
-                ? showPopUp
-                    ? null
-                    : _onHorizontalDrag(details)
-                : null,
-            onHorizontalDragEnd: (details) => isEnableSwipeToSeeTime
-                ? showPopUp
-                    ? null
-                    : _animationController?.reverse()
-                : null,
+            onHorizontalDragUpdate: (details) =>
+                isEnableSwipeToSeeTime && !showPopUp
+                    ? _onHorizontalDrag(details)
+                    : null,
+            onHorizontalDragEnd: (details) =>
+                isEnableSwipeToSeeTime && !showPopUp
+                    ? _animationController?.reverse()
+                    : null,
             onTap: widget.onChatListTap,
             child: _animationController != null
                 ? AnimatedBuilder(
@@ -191,26 +171,28 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                   )
                 : _chatStreamBuilder,
           ),
-          widget.showTypingIndicator
-              ? TypingIndicator(
-                  typeIndicatorConfig: widget.typeIndicatorConfig,
-                  chatBubbleConfig: chatBubbleConfig?.inComingChatBubbleConfig,
-                  showIndicator: widget.showTypingIndicator,
-                )
-              : ValueListenableBuilder(
-                  valueListenable: ChatViewInheritedWidget.of(context)!
-                      .chatController
-                      .typingIndicatorNotifier,
-                  builder: (context, value, child) => TypingIndicator(
-                        typeIndicatorConfig: widget.typeIndicatorConfig,
-                        chatBubbleConfig:
-                            chatBubbleConfig?.inComingChatBubbleConfig,
-                        showIndicator: value,
-                      )),
+          if (chatController != null)
+            ValueListenableBuilder(
+              valueListenable: chatController!.typingIndicatorNotifier,
+              builder: (context, value, child) => TypingIndicator(
+                typeIndicatorConfig: chatListConfig.typeIndicatorConfig,
+                chatBubbleConfig:
+                    chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig,
+                showIndicator: value,
+              ),
+            ),
+          if (chatController != null)
+            Flexible(
+              child: Align(
+                alignment: suggestionsListConfig.axisAlignment.alignment,
+                child: const SuggestionList(),
+              ),
+            ),
+
+          // Adds bottom space to the message list, ensuring it is displayed
+          // above the message text field.
           SizedBox(
-            height: (MediaQuery.of(context).size.width *
-                    (widget.replyMessage.message.isNotEmpty ? 0.3 : 0.14)) +
-                (widget.chatTextFieldTopPadding),
+            height: chatTextFieldHeight,
           ),
         ],
       ),
@@ -220,33 +202,26 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
   Future<void> _onReplyTap(String id, List<Message>? messages) async {
     // Finds the replied message if exists
     final repliedMessages = messages?.firstWhere((message) => id == message.id);
-
+    final repliedMsgAutoScrollConfig =
+        chatListConfig.repliedMessageConfig?.repliedMsgAutoScrollConfig;
+    final highlightDuration = repliedMsgAutoScrollConfig?.highlightDuration ??
+        const Duration(milliseconds: 300);
     // Scrolls to replied message and highlights
     if (repliedMessages != null && repliedMessages.key.currentState != null) {
       await Scrollable.ensureVisible(
         repliedMessages.key.currentState!.context,
         // This value will make widget to be in center when auto scrolled.
         alignment: 0.5,
-        curve: widget.repliedMessageConfig?.repliedMsgAutoScrollConfig
-                .highlightScrollCurve ??
-            Curves.easeIn,
-        duration: widget.repliedMessageConfig?.repliedMsgAutoScrollConfig
-                .highlightDuration ??
-            const Duration(milliseconds: 300),
+        curve:
+            repliedMsgAutoScrollConfig?.highlightScrollCurve ?? Curves.easeIn,
+        duration: highlightDuration,
       );
-      if (widget.repliedMessageConfig?.repliedMsgAutoScrollConfig
-              .enableHighlightRepliedMsg ??
-          false) {
+      if (repliedMsgAutoScrollConfig?.enableHighlightRepliedMsg ?? false) {
         _replyId.value = id;
 
-        Future.delayed(
-          widget.repliedMessageConfig?.repliedMsgAutoScrollConfig
-                  .highlightDuration ??
-              const Duration(milliseconds: 300),
-          () {
-            _replyId.value = null;
-          },
-        );
+        Future.delayed(highlightDuration, () {
+          _replyId.value = null;
+        });
       }
     }
   }
@@ -286,7 +261,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                 const CircularProgressIndicator(),
           );
         } else {
-          final messages = widget.chatBackgroundConfig.sortEnable
+          final messages = chatBackgroundConfig.sortEnable
               ? sortMessage(snapshot.data!)
               : snapshot.data!;
 
@@ -310,6 +285,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
           return ListView.builder(
             key: widget.key,
             physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             itemCount: (enableSeparator
                 ? messages.length + messageSeparator.length
@@ -333,18 +309,14 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                 valueListenable: _replyId,
                 builder: (context, state, child) {
                   final message = messages[newIndex];
+                  final enableScrollToRepliedMsg = chatListConfig
+                          .repliedMessageConfig
+                          ?.repliedMsgAutoScrollConfig
+                          .enableScrollToRepliedMsg ??
+                      false;
                   return ChatBubbleWidget(
                     key: message.key,
-                    messageTimeTextStyle:
-                        chatBackgroundConfig.messageTimeTextStyle,
-                    messageTimeIconColor:
-                        chatBackgroundConfig.messageTimeIconColor,
                     message: message,
-                    messageConfig: widget.messageConfig,
-                    chatBubbleConfig: chatBubbleConfig,
-                    profileCircleConfig: profileCircleConfig,
-                    swipeToReplyConfig: widget.swipeToReplyConfig,
-                    repliedMessageConfig: widget.repliedMessageConfig,
                     slideAnimation: _slideAnimation,
                     onLongPress: (yCoordinate, xCoordinate) =>
                         widget.onChatBubbleLongPress(
@@ -354,11 +326,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                     ),
                     onSwipe: widget.assignReplyMessage,
                     shouldHighlight: state == message.id,
-                    onReplyTap: widget
-                                .repliedMessageConfig
-                                ?.repliedMsgAutoScrollConfig
-                                .enableScrollToRepliedMsg ??
-                            false
+                    onReplyTap: enableScrollToRepliedMsg
                         ? (replyId) => _onReplyTap(replyId, snapshot.data)
                         : null,
                   );
@@ -373,12 +341,11 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
 
   List<Message> sortMessage(List<Message> messages) {
     final elements = [...messages];
-
     elements.sort(
-      widget.chatBackgroundConfig.messageSorter ??
+      chatBackgroundConfig.messageSorter ??
           (a, b) => a.createdAt.compareTo(b.createdAt),
     );
-    if (widget.chatBackgroundConfig.groupedListOrder.isAsc) {
+    if (chatBackgroundConfig.groupedListOrder.isAsc) {
       return elements.toList();
     } else {
       return elements.reversed.toList();

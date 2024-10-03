@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/chatview.dart';
-import 'package:chatview/src/models/voice_message_configuration.dart';
+import 'package:chatview/src/models/config_models/voice_message_configuration.dart';
 import 'package:chatview/src/widgets/reaction_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class VoiceMessageView extends StatefulWidget {
   const VoiceMessageView({
-    Key? key,
+    super.key,
     required this.screenWidth,
     required this.message,
     required this.isMessageBySender,
@@ -18,7 +18,7 @@ class VoiceMessageView extends StatefulWidget {
     this.onMaxDuration,
     this.messageReactionConfig,
     this.config,
-  }) : super(key: key);
+  });
 
   /// Provides configuration related to voice message.
   final VoiceMessageConfiguration? config;

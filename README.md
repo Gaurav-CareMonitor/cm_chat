@@ -1,40 +1,190 @@
-![Banner](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chat_ui/main/preview/banner.png)
+![Banner](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chatview/main/preview/banner.png)
 
 # ChatView
- [![chatview](https://img.shields.io/pub/v/chatview?label=chatview)](https://pub.dev/packages/chatview)
+[![chatview](https://img.shields.io/pub/v/chatview?label=chatview)](https://pub.dev/packages/chatview)
 
 A Flutter package that allows you to integrate Chat View with highly customization options such as one on one
 chat, group chat, message reactions, reply messages, link preview and configurations for overall view.
 
-For web demo
-visit [Chat View Example](https://chat-view-8f1b5.web.app/#/).
+For web demo visit [Chat View Example](https://simformsolutionspvtltd.github.io/flutter_chatview/).
 
 ## Preview
 
-![The example app running in iOS](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chat_ui/main/preview/chatview.gif)
+![The example app running in iOS](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chatview/main/preview/chatview.gif)
 
 ## Migration guide for release 2.0.0
-Removed `showTypingIndicator` field from `ChatView` and replaced it with `ChatController.showTypingIndicator`.
 
-Before:
-```dart
-ChatView(
-  showTypingIndicator:false,
-),
-```
+- Renamed `sendBy` field to `sentBy` in `Message` class.
 
-After:
-```dart
-/// use it with your [ChatController] instance.
-_chatContoller.setTypingIndicator = true; // for showing indicator
-_chatContoller.setTypingIndicator = false; // for hiding indicator
+- Renamed `chatUsers` field to `otherUsers` in `ChatController` class.
 
-ChatView(
-  chatController: _chatController,
-),
-```
+- Moved `currentUser` field from `ChatView` widget to `ChatController` class
 
-## Installing   
+- Updated `id` value in `copyWith` method of `Message` to have correct value.
+
+- Removed `showTypingIndicator` field from `ChatView` and replaced it with `ChatController.showTypingIndicator`.
+
+  Before:
+    ```dart
+    ChatView(
+      showTypingIndicator:false,
+    ),
+    ```
+
+  After:
+    ```dart
+    /// use it with your [ChatController] instance.
+    _chatContoller.setTypingIndicator = true; // for showing indicator
+    _chatContoller.setTypingIndicator = false; // for hiding indicator
+    ```
+
+- Updated `ChatUser`, `Message` and `ReplyMessage` Data Model's `fromJson` and `toJson` methods:
+
+  ##### in `ChatUser.fromJson`:
+
+  Before:
+    ```dart
+    ChatUser.fromJson(
+      { 
+        ...
+        'imageType': ImageType.asset,
+        ...
+      },
+    ),
+    ```
+
+  After:
+    ```dart
+    ChatUser.fromJson(
+      {
+        ...
+        'imageType': 'asset',
+        ...
+      },
+    ),
+    ```
+
+  ##### in `ChatUser.toJson`:
+
+  Before:
+    ```dart
+    {
+      ...
+      imageType: ImageType.asset,
+      ...
+    }
+    ```
+
+  After:
+    ```dart
+    {
+      ...
+      imageType: asset,
+      ...
+    }
+    ```
+
+  ##### in `Message.fromJson`:
+
+  Before:
+    ```dart
+    Message.fromJson(
+      {
+        ...
+        'createdAt': DateTime.now(),
+        'message_type': MessageType.text,
+        'voice_message_duration': Duration(seconds: 5),
+        ...
+      }
+    )
+    ```
+
+  After:
+    ```dart
+    Message.fromJson(
+      {
+        ...
+        'createdAt': '2024-06-13T17:32:19.586412',
+        'message_type': 'text',
+        'voice_message_duration': '5000000',
+        ...
+      }
+    )
+    ```
+
+  ##### in `Message.toJson`:
+
+  Before:
+    ```dart
+    {
+      ...
+      createdAt: 2024-06-13 17:23:19.454789,
+      message_type: MessageType.text,
+      voice_message_duration: 0:00:05.000000,
+      ...
+    }
+    ```
+
+  After:
+    ```dart
+    {
+      ...
+      createdAt: 2024-06-13T17:32:19.586412,
+      message_type: text,
+      voice_message_duration: 5000000,
+      ...
+    }
+    ```
+
+  ##### in `ReplyMessage.fromJson`:
+
+  Before:
+    ```dart
+    ReplyMessage.fromJson(
+      {
+        ...
+        'message_type': MessageType.text,  
+        'voiceMessageDuration': Duration(seconds: 5),
+        ...
+      }
+    )
+    ```
+
+  After:
+    ```dart
+    ReplyMessage.fromJson(
+      {
+        ...
+        'message_type': 'text',  
+        'voiceMessageDuration': '5000000',
+        ...
+      }
+    )
+    ```
+
+  in `ReplyMessage.toJson`:
+
+  Before:
+    ```dart
+    {
+      ...
+      message_type: MessageType.text,
+      voiceMessageDuration: 0:00:05.000000,
+      ...
+    }
+    ```
+
+  After:
+    ```dart
+    {
+      ...
+      message_type: text,
+      voiceMessageDuration: 5000000,
+      ...
+    }
+    ```
+
+## Installing
 
 1.  Add dependency to `pubspec.yaml`
 
@@ -48,19 +198,20 @@ dependencies:
 ```dart
 import 'package:chatview/chatview.dart';
 ```
+
 3. Adding a chat controller.
 ```dart
 final chatController = ChatController(
   initialMessageList: messageList,
   scrollController: ScrollController(),
-  chatUsers: [ChatUser(id: '2', name: 'Simform')],
+  currentUser: ChatUser(id: '1', name: 'Flutter'),
+  otherUsers: [ChatUser(id: '2', name: 'Simform')],
 );
 ```
 
 4. Adding a `ChatView` widget.
 ```dart
 ChatView(
-  currentUser: ChatUser(id: '1', name: 'Flutter'),
   chatController: chatController,
   onSendTap: onSendTap,
   chatViewState: ChatViewState.hasMessages, // Add this state once data is available.
@@ -74,13 +225,13 @@ List<Message> messageList = [
     id: '1',
     message: "Hi",
     createdAt: createdAt,
-    sendBy: userId,
+    sentBy: userId,
   ),
   Message(
     id: '2',
     message: "Hello",
     createdAt: createdAt,
-    sendBy: userId,
+    sentBy: userId,
   ),
 ];
 ```
@@ -92,7 +243,7 @@ void onSendTap(String message, ReplyMessage replyMessage, MessageType messageTyp
     id: '3',
     message: "How are you",
     createdAt: DateTime.now(),
-    sendBy: currentUser.id,
+    senBy: currentUser.id,
     replyMessage: replyMessage,
     messageType: messageType,
   );
@@ -241,10 +392,10 @@ ChatView(
 ChatView(
   ...
   swipeToReplyConfig: SwipeToReplyConfiguration(
-    onLeftSwipe: (message, sendBy){
+    onLeftSwipe: (message, sentBy){
         // Your code goes here
     },
-    onRightSwipe: (message, sendBy){
+    onRightSwipe: (message, sentBy){
         // Your code goes here
     },              
   ),
@@ -339,6 +490,7 @@ ChatView(
   ),
   ...
 )
+
 ```
 12. For showing hiding typeIndicatorwidget use `ChatController.setTypingIndicaor`, for more info see `ChatController`.
 ```dart
@@ -346,9 +498,6 @@ ChatView(
 _chatContoller.setTypingIndicator = true; // for showing indicator
 _chatContoller.setTypingIndicator = false; // for hiding indicator
 ```
-
-
-
 
 13. Adding linkpreview configuration with `LinkPreviewConfiguration` class.
 ```dart
@@ -375,9 +524,7 @@ ChatView(
 )
 ```
 
-
-
-13. Adding pagination.
+14. Adding pagination.
 ```dart
 ChatView(
   ...
@@ -390,7 +537,7 @@ ChatView(
 )
 ```
 
-14. Add image picker configuration.
+15. Add image picker configuration.
 ```dart
 ChatView(
   ...
@@ -406,7 +553,7 @@ ChatView(
 )
 ```
 
-15. Add `ChatViewState` customisations.
+16. Add `ChatViewState` customisations.
 ```dart
 ChatView(
   ...
@@ -420,7 +567,7 @@ ChatView(
 )
 ```
 
-16. Setting auto scroll and highlight config with `RepliedMsgAutoScrollConfig` class.
+17. Setting auto scroll and highlight config with `RepliedMsgAutoScrollConfig` class.
 ```dart
 ChatView(
     ...
@@ -433,8 +580,8 @@ ChatView(
 )
 ```
 
-17.  Callback when a user starts/stops typing in `TextFieldConfiguration`
-    
+18. Callback when a user starts/stops typing in `TextFieldConfiguration`
+
 ```dart
 ChatView(
     ...
@@ -458,8 +605,8 @@ ChatView(
 )
 ```
 
-18.  Passing customReceipts builder or handling stuffs related receipts see `ReceiptsWidgetConfig` in  outgoingChatBubbleConfig.
-    
+19. Passing customReceipts builder or handling stuffs related receipts see `ReceiptsWidgetConfig` in  outgoingChatBubbleConfig.
+
 ```dart
 ChatView(
    ...
@@ -492,18 +639,7 @@ ChatView(
 )
 ```
 
-19. Added field `chatTextFieldTopPadding` to set top padding of chat text field.
-
-```dart
-ChatView(
-   ...
-      chatTextFieldTopPadding: 10,
-  ...
- 
-)
-```
-
-20.  Flag `enableOtherUserName` to hide user name in chat.
+20. Flag `enableOtherUserName` to hide user name in chat.
 
 ```dart
 ChatView(
@@ -525,7 +661,7 @@ ChatView(
         onReportTap: (Message message) {
           debugPrint('Message: $message');
         },
-        onMoreTap: (Message message, bool sendByCurrentUser) {
+        onMoreTap: (Message message, bool sentByCurrentUser) {
           debugPrint('Message : $message');
         },
       ),
@@ -726,7 +862,6 @@ ChatView(
 ),
 ```
 
-
 31. Added a `customMessageReplyViewBuilder` to customize reply message view for custom type message.
 
 ```dart
@@ -812,10 +947,44 @@ ChatView(
 )
 ```
 
+33. Reply Suggestions functionalities.
 
-33. Added callback `messageSorter` to sort message in `ChatBackgroundConfiguration`.
+* Add reply suggestions
 ```dart
+_chatController.addReplySuggestions([
+      SuggestionItemData(text: 'Thanks.'),
+      SuggestionItemData(text: 'Thank you very much.'),
+      SuggestionItemData(text: 'Great.')
+    ]);
+```
+* Remove reply suggestions
+```dart
+_chatController.removeReplySuggestions();
+```
+* Update suggestions Config
+```dart
+replySuggestionsConfig: ReplySuggestionsConfig(
+    itemConfig: SuggestionItemConfig(
+        decoration: BoxDecoration(),
+        textStyle: TextStyle(),
+        padding: EdgetInsets.all(8),
+        customItemBuilder: (index, suggestionItemData) => Container()
+    ),
+    listConfig: SuggestionListConfig(
+        decoration: BoxDecoration(),
+        padding: EdgetInsets.all(8),
+        itemSeparatorWidth: 8,
+        axisAlignment: SuggestionListAlignment.left
+    )
+    onTap: (item) =>
+        _onSendTap(item.text, const ReplyMessage(), MessageType.text),
+    autoDismissOnSelection: true
+),
+```
 
+34. Added callback `messageSorter` to sort message in `ChatBackgroundConfiguration`.
+
+```dart
 ChatView(
    ...
       chatBackgroundConfig: ChatBackgroundConfiguration(
@@ -829,10 +998,22 @@ ChatView(
 ),
 ```
 
+35. Use `ScrollToBottomButtonConfig` to change the configuration of scroll to bottom button.
+
+
+```dart
+ChatView(
+  ...
+    scrollToBottomButtonConfig: ScrollToBottomButtonConfig(
+
+),
+  ...
+),
+```
 
 ## How to use
 
-Check out [blog](https://medium.com/simform-engineering/chatview-a-cutting-edge-chat-ui-solution-7367b1f9d772) for better understanding and basic implementation. 
+Check out [blog](https://medium.com/simform-engineering/chatview-a-cutting-edge-chat-ui-solution-7367b1f9d772) for better understanding and basic implementation.
 
 Also, for whole example, check out the **example** app in the [example](https://github.com/SimformSolutionsPvtLtd/flutter_chatview/tree/main/example) directory or the 'Example' tab on pub.dartlang.org for a more complete example.
 
@@ -844,6 +1025,8 @@ Also, for whole example, check out the **example** app in the [example](https://
     <td align="center"><a href="https://github.com/vatsaltanna"><img src="https://avatars.githubusercontent.com/u/25323183?s=100" width="100px;" alt=""/><br /><sub><b>Vatsal Tanna</b></sub></a></td>
     <td align="center"><a href="https://github.com/DhvanitVaghani"><img src="https://avatars.githubusercontent.com/u/64645989?v=4" width="100px;" alt=""/><br /><sub><b>Dhvanit Vaghani</b></sub></a></td>
     <td align="center"><a href="https://github.com/Ujas-Majithiya"><img src="https://avatars.githubusercontent.com/u/56400956?v=4" width="100px;" alt=""/><br /><sub><b>Ujas Majithiya</b></sub></a></td>
+    <td align="center"><a href="https://github.com/apurva780"><img src="https://avatars.githubusercontent.com/u/65003381?v=4" width="100px;" alt=""/><br /><sub><b>Apurva Kanthraviya</b></sub></a></td>
+    <td align="center"><a href="https://github.com/aditya-chavda"><img src="https://avatars.githubusercontent.com/u/41247722?v=4" width="100px;" alt=""/><br /><sub><b>Aditya Chavda</b></sub></a></td>
   </tr>
 </table>
 <br/>

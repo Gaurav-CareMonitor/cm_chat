@@ -23,8 +23,8 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
-import '../models/message.dart';
-import '../models/replied_message_configuration.dart';
+import '../models/config_models/replied_message_configuration.dart';
+import '../models/data_models/message.dart';
 import '../utils/constants/constants.dart';
 import '../utils/package_strings.dart';
 import 'chat_view_inherited_widget.dart';
@@ -50,13 +50,12 @@ class ReplyMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ChatViewInheritedWidget.of(context)?.currentUser;
-    final replyBySender = message.replyMessage.replyBy == currentUser?.id;
+    final chatController = ChatViewInheritedWidget.of(context)?.chatController;
+    final currentUser = chatController?.currentUser;
+    final replyBySender = message.replyMessage.replyBy?.id == currentUser?.id;
     final textTheme = Theme.of(context).textTheme;
     final replyMessage = message.replyMessage.message;
-    final chatController = ChatViewInheritedWidget.of(context)?.chatController;
-    final messagedUser =
-        chatController?.getUserFromId(message.replyMessage.replyBy);
+    final messagedUser = message.replyMessage.replyBy;
     final replyBy = replyBySender ? PackageStrings.you : messagedUser?.name;
     return GestureDetector(
       onTap: onTap,
