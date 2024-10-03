@@ -54,6 +54,8 @@ class Message {
   /// Provides max duration for recorded voice message.
   Duration? voiceMessageDuration;
 
+  Map? metadata;
+
   Message({
     this.id = '',
     required this.message,
@@ -63,6 +65,7 @@ class Message {
     Reaction? reaction,
     this.messageType = MessageType.text,
     this.voiceMessageDuration,
+    this.metadata,
     MessageStatus status = MessageStatus.pending,
   })  : reaction = reaction ?? Reaction(reactions: [], reactedUserIds: []),
         key = GlobalKey(),
@@ -110,6 +113,7 @@ class Message {
         ),
         status: MessageStatus.tryParse(json['status']?.toString()) ??
             MessageStatus.pending,
+        metadata: json['metadata'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -122,6 +126,7 @@ class Message {
         'message_type': messageType.name,
         'voice_message_duration': voiceMessageDuration?.inMicroseconds,
         'status': status.name,
+        'metadata': metadata,
       };
 
   Message copyWith({
@@ -136,6 +141,7 @@ class Message {
     Duration? voiceMessageDuration,
     MessageStatus? status,
     bool forceNullValue = false,
+    Map? metadata,
   }) {
     return Message(
       id: id ?? this.id,
@@ -149,6 +155,7 @@ class Message {
       reaction: reaction ?? this.reaction,
       replyMessage: replyMessage ?? this.replyMessage,
       status: status ?? this.status,
+      metadata: metadata ?? this.metadata,
     );
   }
 }
