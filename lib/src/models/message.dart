@@ -59,6 +59,8 @@ class Message {
   /// Provides max duration for recorded voice message.
   Duration? voiceMessageDuration;
 
+  Map? metadata;
+
   Message(
       {this.id = '',
       required this.message,
@@ -70,6 +72,7 @@ class Message {
       this.messageType = MessageType.text,
       this.voiceMessageDuration,
       MessageStatus status = MessageStatus.pending,
+      this.metadata,
       this.attachments = const []})
       : reaction = reaction ?? Reaction(reactions: [], reactedUserIds: []),
         key = GlobalKey(),
@@ -144,6 +147,7 @@ class Message {
     MessageStatus? status,
     bool forceNullValue = false,
     String? hint,
+    Map? metadata,
   }) {
     return Message(
       id: id ?? this.message,
@@ -158,6 +162,7 @@ class Message {
       replyMessage: replyMessage ?? this.replyMessage,
       status: status ?? this.status,
       hint: hint ?? this.hint,
+      metadata: metadata ?? this.metadata,
     );
   }
 }

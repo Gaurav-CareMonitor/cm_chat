@@ -107,6 +107,7 @@ class ChatController {
       status: message.status,
       attachments: message.attachments,
       hint: message.hint,
+      metadata: message.metadata,
     );
     messageStreamController.sink.add(initialMessageList);
   }
