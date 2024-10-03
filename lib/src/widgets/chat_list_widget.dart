@@ -157,7 +157,8 @@ class _ChatListWidgetState extends State<ChatListWidget>
                       if (featureActiveConfig?.enableReplySnackBar ?? false) {
                         _showReplyPopup(
                           message: message,
-                          sentByCurrentUser: message.sentBy == currentUser?.id,
+                          sentByCurrentUser:
+                              message.sentBy.id == currentUser?.id,
                         );
                       }
                     },

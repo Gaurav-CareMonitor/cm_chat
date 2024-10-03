@@ -67,7 +67,7 @@ class ChatBubbleWidget extends StatefulWidget {
 class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   String get replyMessage => widget.message.replyMessage.message;
 
-  bool get isMessageBySender => widget.message.sentBy == currentUser?.id;
+  bool get isMessageBySender => widget.message.sentBy.id == currentUser?.id;
 
   bool get isLastMessage =>
       chatController?.initialMessageList.last.id == widget.message.id;
@@ -245,32 +245,34 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
       crossAxisAlignment:
           isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        if ((chatController?.otherUsers.isNotEmpty ?? false) &&
-            !isMessageBySender &&
-            (featureActiveConfig?.enableOtherUserName ?? true))
-          Padding(
-            padding: chatListConfig
-                    .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Text(
-              messagedUser?.name ?? '',
-              style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig
-                  ?.senderNameTextStyle,
+        if (widget.message.messageType != MessageType.custom)
+          if ((chatController?.otherUsers.isNotEmpty ?? false) &&
+              !isMessageBySender &&
+              (featureActiveConfig?.enableOtherUserName ?? true))
+            Padding(
+              padding: chatListConfig
+                      .chatBubbleConfig?.inComingChatBubbleConfig?.padding ??
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text(
+                messagedUser?.name ?? '',
+                style: chatListConfig.chatBubbleConfig?.inComingChatBubbleConfig
+                    ?.senderNameTextStyle,
+              ),
             ),
-          ),
-        if ((chatController?.otherUsers.isNotEmpty ?? false) &&
-            isMessageBySender &&
-            (featureActiveConfig?.enableCurrentUserName ?? true))
-          Padding(
-            padding: chatListConfig
-                    .chatBubbleConfig?.outgoingChatBubbleConfig?.padding ??
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Text(
-              messagedUser?.name ?? '',
-              style: chatListConfig.chatBubbleConfig?.outgoingChatBubbleConfig
-                  ?.senderNameTextStyle,
+        if (widget.message.messageType != MessageType.custom)
+          if ((chatController?.otherUsers.isNotEmpty ?? false) &&
+              isMessageBySender &&
+              (featureActiveConfig?.enableCurrentUserName ?? true))
+            Padding(
+              padding: chatListConfig
+                      .chatBubbleConfig?.outgoingChatBubbleConfig?.padding ??
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text(
+                messagedUser?.name ?? '',
+                style: chatListConfig.chatBubbleConfig?.outgoingChatBubbleConfig
+                    ?.senderNameTextStyle,
+              ),
             ),
-          ),
         if (replyMessage.isNotEmpty)
           chatListConfig.repliedMessageConfig?.repliedMessageWidgetBuilder !=
                   null
