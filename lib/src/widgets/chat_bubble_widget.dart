@@ -38,9 +38,13 @@ class ChatBubbleWidget extends StatefulWidget {
     required this.onLongPress,
     required this.slideAnimation,
     required this.onSwipe,
+    this.previousMessage,
     this.onReplyTap,
     this.shouldHighlight = false,
   }) : super(key: key);
+
+  /// Previous message in the chat list
+  final Message? previousMessage;
 
   /// Represent current instance of message.
   final Message message;
@@ -71,6 +75,27 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
 
   bool get isLastMessage =>
       chatController?.initialMessageList.last.id == widget.message.id;
+
+  /// Check if current message should show user details
+  bool get shouldShowUserDetails {
+    if (widget.previousMessage == null) return true;
+    if (widget.message.messageType == MessageType.custom) return true;
+
+    final currentMessageUser = widget.message.sentBy;
+    final previousMessageUser = widget.previousMessage!.sentBy;
+
+    // Show details if previous message is from different user
+    if (currentMessageUser.id != previousMessageUser.id) return true;
+
+    // Optional: You can also check time difference between messages
+    // If messages are sent with large time gap, show details
+    final timeDifference = widget.message.createdAt
+        .difference(widget.previousMessage!.createdAt)
+        .inMinutes;
+
+    return timeDifference >
+        5; // Show details if messages are more than 5 minutes apart
+  }
 
   FeatureActiveConfig? featureActiveConfig;
   ChatController? chatController;
@@ -245,9 +270,10 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
       crossAxisAlignment:
           isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        if (widget.message.messageType != MessageType.custom)
-          if ((chatController?.otherUsers.isNotEmpty ?? false) &&
-              !isMessageBySender &&
+        if (widget.message.messageType != MessageType.custom &&
+            (chatController?.otherUsers.isNotEmpty ?? false) &&
+            shouldShowUserDetails) ...[
+          if (!isMessageBySender &&
               (featureActiveConfig?.enableOtherUserName ?? true))
             Padding(
               padding: chatListConfig
@@ -259,9 +285,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                     ?.senderNameTextStyle,
               ),
             ),
-        if (widget.message.messageType != MessageType.custom)
-          if ((chatController?.otherUsers.isNotEmpty ?? false) &&
-              isMessageBySender &&
+          if (isMessageBySender &&
               (featureActiveConfig?.enableCurrentUserName ?? true))
             Padding(
               padding: chatListConfig
@@ -273,6 +297,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                     ?.senderNameTextStyle,
               ),
             ),
+        ],
         if (replyMessage.isNotEmpty)
           chatListConfig.repliedMessageConfig?.repliedMessageWidgetBuilder !=
                   null

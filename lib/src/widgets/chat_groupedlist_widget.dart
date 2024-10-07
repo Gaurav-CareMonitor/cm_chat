@@ -309,6 +309,9 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                 valueListenable: _replyId,
                 builder: (context, state, child) {
                   final message = messages[newIndex];
+                  final previousMessage =
+                      newIndex > 0 ? messages[newIndex - 1] : null;
+
                   final enableScrollToRepliedMsg = chatListConfig
                           .repliedMessageConfig
                           ?.repliedMsgAutoScrollConfig
@@ -317,6 +320,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                   return ChatBubbleWidget(
                     key: message.key,
                     message: message,
+                    previousMessage: previousMessage, // Pass previous message
                     slideAnimation: _slideAnimation,
                     onLongPress: (yCoordinate, xCoordinate) =>
                         widget.onChatBubbleLongPress(
