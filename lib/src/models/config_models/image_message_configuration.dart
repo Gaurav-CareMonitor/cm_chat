@@ -43,7 +43,7 @@ class ImageMessageConfiguration {
   final EdgeInsetsGeometry? padding;
 
   /// Used for giving margin of image message.
-  final EdgeInsetsGeometry? margin;
+  final EdgeInsets? margin;
 
   /// Used for giving border radius of image message.
   final BorderRadius? borderRadius;

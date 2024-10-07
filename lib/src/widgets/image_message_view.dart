@@ -40,6 +40,7 @@ class ImageMessageView extends StatelessWidget {
     this.outgoingChatBubbleConfig,
     this.highlightImage = false,
     this.highlightScale = 1.2,
+    this.removeBottomMargin = false,
   }) : super(key: key);
 
   /// Provides configuration of chat bubble appearance from other user of chat.
@@ -66,6 +67,8 @@ class ImageMessageView extends StatelessWidget {
   /// Provides scale of highlighted image when user taps on replied image.
   final double highlightScale;
 
+  final bool removeBottomMargin;
+
   String get imageUrl => message.message;
 
   Widget get iconButton => ShareIcon(
@@ -76,6 +79,20 @@ class ImageMessageView extends StatelessWidget {
   Color get _color => isMessageBySender
       ? outgoingChatBubbleConfig?.color ?? Colors.purple
       : inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
+
+  EdgeInsets get _margin {
+    final marginalDiff = (imageMessageConfig?.margin ??
+        EdgeInsets.only(
+          top: 6,
+          right: isMessageBySender ? 6 : 0,
+          left: isMessageBySender ? 0 : 6,
+          bottom: message.reaction.reactions.isNotEmpty ? 15 : 0,
+        ));
+    if (removeBottomMargin) {
+      return marginalDiff.copyWith(bottom: 0);
+    }
+    return marginalDiff;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +108,7 @@ class ImageMessageView extends StatelessWidget {
           children: [
             Container(
               clipBehavior: Clip.antiAlias,
-              margin: imageMessageConfig?.margin ??
-                  EdgeInsets.only(
-                    top: 6,
-                    right: isMessageBySender ? 6 : 0,
-                    left: isMessageBySender ? 0 : 6,
-                    bottom: message.reaction.reactions.isNotEmpty ? 15 : 0,
-                  ),
+              margin: _margin,
               decoration: BoxDecoration(
                 color: _color,
                 borderRadius: imageMessageConfig?.borderRadius ??
@@ -154,12 +165,12 @@ class ImageMessageView extends StatelessWidget {
                               return Image.memory(
                                 base64Decode(imageUrl
                                     .substring(imageUrl.indexOf('base64') + 7)),
-                                fit: BoxFit.fill,
+                                fit: BoxFit.fitHeight,
                               );
                             } else {
                               return Image.file(
                                 File(imageUrl),
-                                fit: BoxFit.fill,
+                                fit: BoxFit.fitHeight,
                               );
                             }
                           }()),

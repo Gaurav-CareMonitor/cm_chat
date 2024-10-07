@@ -237,6 +237,8 @@ class _MessageViewState extends State<MessageView>
                           case MessageType.image:
                             return ImageMessageView(
                               message: e.$2,
+                              removeBottomMargin:
+                                  widget.message.message.isEmpty,
                               isMessageBySender: widget.isMessageBySender,
                               imageMessageConfig:
                                   messageConfig?.imageMessageConfig,
