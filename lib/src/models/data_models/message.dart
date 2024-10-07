@@ -117,6 +117,11 @@ class Message {
         status: MessageStatus.tryParse(json['status']?.toString()) ??
             MessageStatus.pending,
         metadata: json['metadata'],
+        attachments: json['attachments'] is List
+            ? (json['attachments'] as List)
+                .map((e) => ChatAttachment.fromMap(e))
+                .toList()
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -130,6 +135,7 @@ class Message {
         'voice_message_duration': voiceMessageDuration?.inMicroseconds,
         'status': status.name,
         'metadata': metadata,
+        'attachments': attachments.map((e) => e.toMap()).toList(),
       };
 
   Message copyWith({
@@ -145,6 +151,7 @@ class Message {
     MessageStatus? status,
     bool forceNullValue = false,
     Map? metadata,
+    List<ChatAttachment>? attachments,
   }) {
     return Message(
       id: id ?? this.message,
@@ -159,6 +166,7 @@ class Message {
       replyMessage: replyMessage ?? this.replyMessage,
       status: status ?? this.status,
       metadata: metadata ?? this.metadata,
+      attachments: attachments ?? this.attachments,
     );
   }
 }

@@ -142,6 +142,7 @@ class ChatController {
       messageType: message.messageType,
       status: message.status,
       metadata: message.metadata,
+      attachments: message.attachments,
     );
     if (!messageStreamController.isClosed) {
       messageStreamController.sink.add(initialMessageList);
