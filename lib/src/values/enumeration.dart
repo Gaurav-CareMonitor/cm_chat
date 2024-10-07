@@ -24,6 +24,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../models/data_models/attachment.dart';
+
 enum MessageType {
   image,
   text,
@@ -31,6 +33,17 @@ enum MessageType {
   /// Only supported on android and ios
   voice,
   custom;
+
+  static MessageType fromMediaType(MediaType type) {
+    switch (type) {
+      case MediaType.image:
+        return image;
+      case MediaType.audio:
+        return voice;
+      default:
+        return custom;
+    }
+  }
 
   static MessageType? tryParse(String? value) {
     final type = value?.trim().toLowerCase();

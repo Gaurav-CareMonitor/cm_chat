@@ -38,6 +38,9 @@ class MessageConfiguration {
   /// Provides builder to create view for custom messages.
   final Widget Function(Message)? customMessageBuilder;
 
+  /// Provides builder to create view for custom messages.
+  final Widget Function(ChatAttachment, Message)? customAttachmentBuilder;
+
   /// Configurations for voice message bubble
   final VoiceMessageConfiguration? voiceMessageConfig;
 
@@ -46,12 +49,14 @@ class MessageConfiguration {
 
   final void Function(String)? onUrlTap;
 
-  const MessageConfiguration(
-      {this.imageMessageConfig,
-      this.messageReactionConfig,
-      this.emojiMessageConfig,
-      this.customMessageBuilder,
-      this.voiceMessageConfig,
-      this.customMessageReplyViewBuilder,
-      this.onUrlTap});
+  const MessageConfiguration({
+    this.imageMessageConfig,
+    this.messageReactionConfig,
+    this.emojiMessageConfig,
+    this.customMessageBuilder,
+    this.voiceMessageConfig,
+    this.customMessageReplyViewBuilder,
+    this.customAttachmentBuilder,
+    this.onUrlTap,
+  });
 }

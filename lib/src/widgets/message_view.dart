@@ -201,6 +201,8 @@ class _MessageViewState extends State<MessageView>
                   );
                 } else if (widget.message.messageType.isImage) {
                   return ImageMessageView(
+                    inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
+                    outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,
                     message: widget.message,
                     isMessageBySender: widget.isMessageBySender,
                     imageMessageConfig: messageConfig?.imageMessageConfig,
@@ -219,6 +221,55 @@ class _MessageViewState extends State<MessageView>
                     messageReactionConfig: messageConfig?.messageReactionConfig,
                     highlightColor: widget.highlightColor,
                     highlightMessage: widget.shouldHighlight,
+                    children: [
+                      ...widget.message.attachments
+                          .map((e) => (
+                                e,
+                                Message(
+                                    message: e.url,
+                                    createdAt: DateTime.now(),
+                                    sentBy: widget.message.sentBy,
+                                    messageType:
+                                        MessageType.fromMediaType(e.mediaType))
+                              ))
+                          .map((e) {
+                        switch (e.$2.messageType) {
+                          case MessageType.image:
+                            return ImageMessageView(
+                              message: e.$2,
+                              isMessageBySender: widget.isMessageBySender,
+                              imageMessageConfig:
+                                  messageConfig?.imageMessageConfig,
+                              messageReactionConfig:
+                                  messageConfig?.messageReactionConfig,
+                              highlightImage: widget.shouldHighlight,
+                              highlightScale: widget.highlightScale,
+                              inComingChatBubbleConfig:
+                                  widget.inComingChatBubbleConfig,
+                              outgoingChatBubbleConfig:
+                                  widget.outgoingChatBubbleConfig,
+                            );
+                          case MessageType.voice:
+                            return VoiceMessageView(
+                              screenWidth: MediaQuery.of(context).size.width,
+                              message: e.$2,
+                              config: messageConfig?.voiceMessageConfig,
+                              onMaxDuration: widget.onMaxDuration,
+                              isMessageBySender: widget.isMessageBySender,
+                              messageReactionConfig:
+                                  messageConfig?.messageReactionConfig,
+                              inComingChatBubbleConfig:
+                                  widget.inComingChatBubbleConfig,
+                              outgoingChatBubbleConfig:
+                                  widget.outgoingChatBubbleConfig,
+                            );
+                          default:
+                            return messageConfig?.customAttachmentBuilder
+                                    ?.call(e.$1, e.$2) ??
+                                const SizedBox();
+                        }
+                      }),
+                    ],
                   );
                 } else if (widget.message.messageType.isVoice) {
                   return VoiceMessageView(

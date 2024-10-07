@@ -36,9 +36,17 @@ class ImageMessageView extends StatelessWidget {
     required this.isMessageBySender,
     this.imageMessageConfig,
     this.messageReactionConfig,
+    this.inComingChatBubbleConfig,
+    this.outgoingChatBubbleConfig,
     this.highlightImage = false,
     this.highlightScale = 1.2,
   }) : super(key: key);
+
+  /// Provides configuration of chat bubble appearance from other user of chat.
+  final ChatBubble? inComingChatBubbleConfig;
+
+  /// Provides configuration of chat bubble appearance from current user of chat.
+  final ChatBubble? outgoingChatBubbleConfig;
 
   /// Provides message instance of chat.
   final Message message;
@@ -65,6 +73,10 @@ class ImageMessageView extends StatelessWidget {
         imageUrl: imageUrl,
       );
 
+  Color get _color => isMessageBySender
+      ? outgoingChatBubbleConfig?.color ?? Colors.purple
+      : inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -72,68 +84,103 @@ class ImageMessageView extends StatelessWidget {
       mainAxisAlignment:
           isMessageBySender ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
-        if (isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
-          iconButton,
+        if (isMessageBySender) iconButton,
         Stack(
+          alignment: Alignment.bottomRight,
+          clipBehavior: Clip.none,
           children: [
-            GestureDetector(
-              onTap: () => imageMessageConfig?.onTap != null
-                  ? imageMessageConfig?.onTap!(imageUrl)
-                  : null,
-              child: Transform.scale(
-                scale: highlightImage ? highlightScale : 1.0,
-                alignment: isMessageBySender
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Container(
-                  padding: imageMessageConfig?.padding ?? EdgeInsets.zero,
-                  margin: imageMessageConfig?.margin ??
-                      EdgeInsets.only(
-                        top: 6,
-                        right: isMessageBySender ? 6 : 0,
-                        left: isMessageBySender ? 0 : 6,
-                        bottom: message.reaction.reactions.isNotEmpty ? 15 : 0,
-                      ),
-                  height: imageMessageConfig?.height ?? 200,
-                  width: imageMessageConfig?.width ?? 150,
-                  child: ClipRRect(
-                    borderRadius: imageMessageConfig?.borderRadius ??
-                        BorderRadius.circular(14),
-                    child: (() {
-                      if (imageUrl.isUrl) {
-                        return Image.network(
-                          imageUrl,
-                          fit: BoxFit.fitHeight,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
-                        );
-                      } else if (imageUrl.fromMemory) {
-                        return Image.memory(
-                          base64Decode(imageUrl
-                              .substring(imageUrl.indexOf('base64') + 7)),
-                          fit: BoxFit.fill,
-                        );
-                      } else {
-                        return Image.file(
-                          File(imageUrl),
-                          fit: BoxFit.fill,
-                        );
-                      }
-                    }()),
+            Container(
+              clipBehavior: Clip.antiAlias,
+              margin: imageMessageConfig?.margin ??
+                  EdgeInsets.only(
+                    top: 6,
+                    right: isMessageBySender ? 6 : 0,
+                    left: isMessageBySender ? 0 : 6,
+                    bottom: message.reaction.reactions.isNotEmpty ? 15 : 0,
                   ),
-                ),
+              decoration: BoxDecoration(
+                color: _color,
+                borderRadius: imageMessageConfig?.borderRadius ??
+                    BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => imageMessageConfig?.onTap != null
+                        ? imageMessageConfig?.onTap!(imageUrl)
+                        : null,
+                    child: Transform.scale(
+                      scale: highlightImage ? highlightScale : 1.0,
+                      alignment: isMessageBySender
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        padding: imageMessageConfig?.padding ??
+                            const EdgeInsets.all(5),
+                        height: imageMessageConfig?.height ?? 200,
+                        width: imageMessageConfig?.width ?? 150,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: _color,
+                          borderRadius: imageMessageConfig?.borderRadius ??
+                              BorderRadius.circular(16),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: imageMessageConfig?.borderRadius ??
+                              BorderRadius.circular(14),
+                          child: (() {
+                            if (imageUrl.isUrl) {
+                              return Image.network(
+                                imageUrl,
+                                fit: BoxFit.fitHeight,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                              );
+                            } else if (imageUrl.fromMemory) {
+                              return Image.memory(
+                                base64Decode(imageUrl
+                                    .substring(imageUrl.indexOf('base64') + 7)),
+                                fit: BoxFit.fill,
+                              );
+                            } else {
+                              return Image.file(
+                                File(imageUrl),
+                                fit: BoxFit.fill,
+                              );
+                            }
+                          }()),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Visibility(
+                  //   visible: false,
+                  //   maintainAnimation: true,
+                  //   maintainSize: true,
+                  //   maintainState: true,
+                  //   child: _wBottom(textTheme),
+                  // ),
+                ],
               ),
             ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            //   child: _wBottom(textTheme),
+            // ),
             if (message.reaction.reactions.isNotEmpty)
               ReactionWidget(
                 isMessageBySender: isMessageBySender,
@@ -142,8 +189,7 @@ class ImageMessageView extends StatelessWidget {
               ),
           ],
         ),
-        if (!isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
-          iconButton,
+        if (!isMessageBySender) iconButton,
       ],
     );
   }

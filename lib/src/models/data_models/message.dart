@@ -51,23 +51,26 @@ class Message {
   /// Status of the message.
   final ValueNotifier<MessageStatus> _status;
 
+  final List<ChatAttachment> attachments;
+
   /// Provides max duration for recorded voice message.
   Duration? voiceMessageDuration;
 
   Map? metadata;
 
-  Message({
-    this.id = '',
-    required this.message,
-    required this.createdAt,
-    required this.sentBy,
-    this.replyMessage = const ReplyMessage(),
-    Reaction? reaction,
-    this.messageType = MessageType.text,
-    this.voiceMessageDuration,
-    this.metadata,
-    MessageStatus status = MessageStatus.pending,
-  })  : reaction = reaction ?? Reaction(reactions: [], reactedUserIds: []),
+  Message(
+      {this.id = '',
+      required this.message,
+      required this.createdAt,
+      required this.sentBy,
+      this.replyMessage = const ReplyMessage(),
+      Reaction? reaction,
+      this.messageType = MessageType.text,
+      this.voiceMessageDuration,
+      this.metadata,
+      MessageStatus status = MessageStatus.pending,
+      this.attachments = const []})
+      : reaction = reaction ?? Reaction(reactions: [], reactedUserIds: []),
         key = GlobalKey(),
         _status = ValueNotifier(status),
         assert(
@@ -144,7 +147,7 @@ class Message {
     Map? metadata,
   }) {
     return Message(
-      id: id ?? this.id,
+      id: id ?? this.message,
       message: message ?? this.message,
       createdAt: createdAt ?? this.createdAt,
       sentBy: sentBy ?? this.sentBy,

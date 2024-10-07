@@ -22,6 +22,7 @@
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:linkify_plus/linkify_plus.dart';
 
 import '../utils/constants/constants.dart';
@@ -40,6 +41,7 @@ class TextMessageView extends StatelessWidget {
     this.highlightMessage = false,
     this.highlightColor,
     required this.messageConfig,
+    this.children = const [],
   });
 
   /// Represents current message is sent by current user.
@@ -66,60 +68,124 @@ class TextMessageView extends StatelessWidget {
   /// Allow user to set color of highlighted message.
   final Color? highlightColor;
 
+  final List<Widget> children;
+
   final MessageConfiguration? messageConfig;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final textMessage = message.message;
-    return Stack(
-      clipBehavior: Clip.none,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment:
+          isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        Container(
-          constraints: BoxConstraints(
-              maxWidth: chatBubbleMaxWidth ??
-                  MediaQuery.of(context).size.width * 0.75),
-          padding: _padding ??
-              const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-          margin: _margin ??
-              EdgeInsets.fromLTRB(
-                  5, 0, 6, message.reaction.reactions.isNotEmpty ? 15 : 2),
-          decoration: BoxDecoration(
-            color: highlightMessage ? highlightColor : _color,
-            borderRadius: _borderRadius(textMessage),
-          ),
-          child: textMessage.isUrl
-              ? LinkPreview(
-                  linkPreviewConfig: _linkPreviewConfig,
-                  url: textMessage,
-                )
-              : Linkify(
-                  textScaleFactor: MediaQuery.of(context).textScaler.scale(1),
-                  text: textMessage,
-                  linkStyle: _linkStyle ??
-                      textTheme.bodyMedium!.copyWith(
-                        color: Colors.white,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
-                      ),
-                  onOpen: (e) => messageConfig?.onUrlTap?.call(e.url),
-                  style: _textStyle ??
-                      textTheme.bodyMedium!.copyWith(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+        ...children,
+        Stack(
+          alignment: Alignment.bottomRight,
+          clipBehavior: Clip.none,
+          children: [
+            if (textMessage.isNotEmpty)
+              Container(
+                constraints: BoxConstraints(
+                    maxWidth: chatBubbleMaxWidth ??
+                        MediaQuery.of(context).size.width * 0.75),
+                padding: _padding ??
+                    const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                margin: _margin ??
+                    EdgeInsets.fromLTRB(5, 0, 6,
+                        message.reaction.reactions.isNotEmpty ? 15 : 2),
+                decoration: BoxDecoration(
+                  color: highlightMessage ? highlightColor : _color,
+                  borderRadius: _borderRadius(textMessage),
                 ),
+                child: Column(
+                  crossAxisAlignment: isMessageBySender
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    textMessage.isUrl
+                        ? LinkPreview(
+                            linkPreviewConfig: _linkPreviewConfig,
+                            url: textMessage,
+                          )
+                        : Linkify(
+                            textScaleFactor:
+                                MediaQuery.of(context).textScaler.scale(1),
+                            text: textMessage,
+                            linkStyle: _linkStyle ??
+                                textTheme.bodyMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  decoration: TextDecoration.underline,
+                                ),
+                            onOpen: (e) => messageConfig?.onUrlTap?.call(e.url),
+                            style: _textStyle ??
+                                textTheme.bodyMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                            options: const LinkifyOptions(
+                              humanize: true,
+                              removeWww: true,
+                              looseUrl: false,
+                            ),
+                          ),
+                    Visibility(
+                      visible: false,
+                      maintainAnimation: true,
+                      maintainSize: true,
+                      maintainState: true,
+                      child: SizedBox(height: 10, child: _wBottom(textTheme)),
+                    )
+                  ],
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              child: _wBottom(textTheme),
+            ),
+            if (message.reaction.reactions.isNotEmpty)
+              ReactionWidget(
+                key: key,
+                isMessageBySender: isMessageBySender,
+                reaction: message.reaction,
+                messageReactionConfig: messageReactionConfig,
+              ),
+          ],
         ),
-        if (message.reaction.reactions.isNotEmpty)
-          ReactionWidget(
-            key: key,
-            isMessageBySender: isMessageBySender,
-            reaction: message.reaction,
-            messageReactionConfig: messageReactionConfig,
+      ],
+    );
+  }
+
+  Widget _wBottom(TextTheme textTheme) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if ((message.metadata?["hint"]?.toString() ?? "").isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Text(
+              message.metadata?["hint"]?.toString() ?? "",
+              style: _textStyle?.copyWith(
+                      fontSize: 10, color: Colors.grey.shade700) ??
+                  textTheme.bodyMedium!
+                      .copyWith(color: Colors.grey.shade100, fontSize: 10),
+            ),
           ),
+        Text(
+          DateFormat.jm().format(message.createdAt),
+          style:
+              _textStyle?.copyWith(fontSize: 10, color: Colors.grey.shade700) ??
+                  textTheme.bodyMedium!
+                      .copyWith(color: Colors.grey.shade100, fontSize: 10),
+        ),
       ],
     );
   }
