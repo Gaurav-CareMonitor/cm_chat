@@ -79,7 +79,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   /// Check if current message should show user details
   bool get shouldShowUserDetails {
     if (widget.previousMessage == null) return true;
-    if (widget.message.messageType == MessageType.custom) return true;
+    if (widget.previousMessage?.messageType == MessageType.custom) return true;
 
     final currentMessageUser = widget.message.sentBy;
     final previousMessageUser = widget.previousMessage!.sentBy;
