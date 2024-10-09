@@ -30,6 +30,8 @@ class _SuggestionListState extends State<SuggestionList>
     )..addListener(updateSuggestionsOnAnimation);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final newSuggestions = chatViewIW?.chatController.newSuggestions;
+      animateSuggestionList();
+
       newSuggestions?.addListener(animateSuggestionList);
     });
   }
