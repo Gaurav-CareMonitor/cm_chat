@@ -100,8 +100,35 @@ class ChatController {
     }
   }
 
+  void addMessages(List<Message> messages) {
+    // Create a set of existing message IDs for efficient lookup
+    final existingMessageIds = Set<String>.from(
+      initialMessageList.map((message) => message.id),
+    );
+
+    // Filter out messages that already exist and add only new ones
+    final newMessages = messages
+        .where((message) => !existingMessageIds.contains(message.id))
+        .toList();
+
+    // Add new messages to the initial message list
+    initialMessageList.addAll(newMessages);
+
+    // Update the message stream if it's still active
+    if (!messageStreamController.isClosed) {
+      messageStreamController.sink.add(initialMessageList);
+    }
+  }
+
   void removeMessageAt(int index) {
     initialMessageList.removeAt(index);
+    if (!messageStreamController.isClosed) {
+      messageStreamController.sink.add(initialMessageList);
+    }
+  }
+
+  void removeAllMessages() {
+    initialMessageList.clear();
     if (!messageStreamController.isClosed) {
       messageStreamController.sink.add(initialMessageList);
     }
