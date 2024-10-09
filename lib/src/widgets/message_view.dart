@@ -221,6 +221,9 @@ class _MessageViewState extends State<MessageView>
                     messageReactionConfig: messageConfig?.messageReactionConfig,
                     highlightColor: widget.highlightColor,
                     highlightMessage: widget.shouldHighlight,
+                    messageDateTimeBuilder:
+                        messageConfig?.messageDateTimeBuilder,
+                    messageTimeTextStyle: messageConfig?.messageTimeTextStyle,
                     children: [
                       ...widget.message.attachments
                           .map((e) => (

@@ -140,8 +140,9 @@ class _ChatListWidgetState extends State<ChatListWidget>
                   ChatGroupedListWidget(
                     showPopUp: showPopupValue,
                     scrollController: scrollController,
-                    isEnableSwipeToSeeTime:
-                        featureActiveConfig?.enableSwipeToSeeTime ?? true,
+                    isEnableSwipeToSeeTime: featureActiveConfig
+                            ?.messageTimePositionType.isOnRightSwipe ??
+                        true,
                     assignReplyMessage: widget.assignReplyMessage,
                     replyMessage: widget.replyMessage,
                     onChatBubbleLongPress: (yCoordinate, xCoordinate, message) {

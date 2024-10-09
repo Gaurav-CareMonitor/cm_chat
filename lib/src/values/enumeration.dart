@@ -65,6 +65,37 @@ enum MessageType {
 /// typed the message
 enum TypeWriterStatus { typing, typed }
 
+enum MessageTimePositionType {
+  /// Used for viewing the message created time inside the chatBubble.
+  insideChatBubble,
+
+  insideChatBubblev2,
+
+  /// Used for viewing the message created time outside the chatBubble.
+  outsideChatBubbleAtBottom,
+
+  /// Used for enable/disable swipe whole chat to see message created time.
+  onRightSwipe,
+
+  /// Used for viewing the message created time outside the chatBubble.
+  outsideChatBubbleAtTop,
+
+  /// Used for disabling the viewing of the message created time.
+  disable;
+
+  bool get isInsideChatBubble => this == insideChatBubble;
+
+  bool get isInsideChatBubblev2 => this == insideChatBubblev2;
+
+  bool get isOutSideChatBubbleAtBottom => this == outsideChatBubbleAtBottom;
+
+  bool get isOnRightSwipe => this == onRightSwipe;
+
+  bool get isOutSideChatBubbleAtTop => this == outsideChatBubbleAtTop;
+
+  bool get isDisable => this == disable;
+}
+
 /// [MessageStatus] defines the current state of the message
 /// if you are sender sending a message then, the
 enum MessageStatus {

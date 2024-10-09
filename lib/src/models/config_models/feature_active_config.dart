@@ -1,9 +1,11 @@
+import '../../../chatview.dart';
+
 class FeatureActiveConfig {
   const FeatureActiveConfig({
     this.enableSwipeToReply = true,
     this.enableReactionPopup = true,
     this.enableTextField = true,
-    this.enableSwipeToSeeTime = true,
+    this.messageTimePositionType = MessageTimePositionType.onRightSwipe,
     this.enableCurrentUserProfileAvatar = false,
     this.enableOtherUserProfileAvatar = true,
     this.enableReplySnackBar = true,
@@ -26,8 +28,9 @@ class FeatureActiveConfig {
   /// Used for enable/disable text field.
   final bool enableTextField;
 
-  /// Used for enable/disable swipe whole chat to see message created time.
-  final bool enableSwipeToSeeTime;
+  /// Controls the Position of message created time.
+  /// default value: onRightSwipe
+  final MessageTimePositionType messageTimePositionType;
 
   /// Used for enable/disable current user profile circle.
   final bool enableCurrentUserProfileAvatar;

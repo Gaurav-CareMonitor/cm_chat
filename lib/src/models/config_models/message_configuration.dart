@@ -47,6 +47,12 @@ class MessageConfiguration {
   /// To customize reply view for custom message type
   final CustomMessageReplyViewBuilder? customMessageReplyViewBuilder;
 
+  /// Allow user to set custom formatting of message time.
+  final MessageDateTimeBuilder? messageDateTimeBuilder;
+
+  /// Used to give text style of message's time of a chat bubble
+  final TextStyle? messageTimeTextStyle;
+
   final void Function(String)? onUrlTap;
 
   const MessageConfiguration({
@@ -58,5 +64,7 @@ class MessageConfiguration {
     this.customMessageReplyViewBuilder,
     this.customAttachmentBuilder,
     this.onUrlTap,
+    this.messageDateTimeBuilder,
+    this.messageTimeTextStyle,
   });
 }

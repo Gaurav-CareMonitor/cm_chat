@@ -118,13 +118,16 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
     final messagedUser = widget.message.sentBy;
     return Stack(
       children: [
-        if (featureActiveConfig?.enableSwipeToSeeTime ?? true) ...[
+        if (featureActiveConfig?.messageTimePositionType.isOnRightSwipe ??
+            true) ...[
           Visibility(
             visible: widget.slideAnimation?.value.dx == 0.0 ? false : true,
             child: Positioned.fill(
               child: Align(
                 alignment: Alignment.centerRight,
                 child: MessageTimeWidget(
+                  messageDateTimeBuilder:
+                      chatListConfig.messageConfig?.messageDateTimeBuilder,
                   messageTime: widget.message.createdAt,
                   isCurrentUser: isMessageBySender,
                 ),
@@ -348,6 +351,19 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             onMaxDuration: _onMaxDuration,
           ),
         ),
+        if (featureActiveConfig
+                ?.messageTimePositionType.isOutSideChatBubbleAtTop ??
+            false) ...[
+          const SizedBox(width: 4),
+          chatListConfig.messageConfig?.messageDateTimeBuilder
+                  ?.call(widget.message.createdAt) ??
+              MessageTimeWidget(
+                isCurrentUser: isMessageBySender,
+                messageTime: widget.message.createdAt,
+                messageTimeTextStyle:
+                    chatListConfig.messageConfig?.messageTimeTextStyle,
+              ),
+        ]
       ],
     );
   }
