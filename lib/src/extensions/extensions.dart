@@ -26,6 +26,7 @@ import 'package:chatview/src/widgets/profile_image_widget.dart';
 import 'package:chatview/src/widgets/suggestions/suggestions_config_inherited_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../utils/constants/constants.dart';
 import '../utils/emoji_parser.dart';
 import '../utils/package_strings.dart';
@@ -33,8 +34,14 @@ import '../utils/package_strings.dart';
 /// Extension for DateTime to get specific formats of dates and time.
 extension TimeDifference on DateTime {
   String getDay(String chatSeparatorDatePattern) {
-    final differenceInDays = difference(DateTime.now()).inDays;
+    final now = DateTime.now();
+    final differenceInDays = difference(now).inDays;
+
     if (differenceInDays == 0) {
+      if (now.day - 1 == day) {
+        return PackageStrings.yesterday;
+      }
+
       return PackageStrings.today;
     } else if (differenceInDays <= 1 && differenceInDays >= -1) {
       return PackageStrings.yesterday;
