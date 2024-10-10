@@ -101,7 +101,8 @@ class ImageMessageView extends StatelessWidget {
       mainAxisAlignment:
           isMessageBySender ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
-        if (isMessageBySender) iconButton,
+        if (isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
+          iconButton,
         Stack(
           alignment: Alignment.bottomRight,
           clipBehavior: Clip.none,
@@ -200,7 +201,8 @@ class ImageMessageView extends StatelessWidget {
               ),
           ],
         ),
-        if (!isMessageBySender) iconButton,
+        if (!isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
+          iconButton,
       ],
     );
   }
