@@ -169,3 +169,14 @@ extension BuildContextExtension on BuildContext {
               child: SizedBox.shrink(),
             );
 }
+
+extension ScrollControllerExtension on ScrollController {
+  bool get isDisposed {
+    try {
+      position;
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+}

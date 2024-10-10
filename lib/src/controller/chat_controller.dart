@@ -21,6 +21,7 @@
  */
 import 'dart:async';
 
+import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/widgets/suggestions/suggestion_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +89,7 @@ class ChatController {
   void dispose() {
     _showTypingIndicator.dispose();
     _replySuggestion.dispose();
-    scrollController.dispose();
+    if (!scrollController.isDisposed) scrollController.dispose();
     messageStreamController.close();
   }
 
