@@ -106,8 +106,12 @@ class TextMessageView extends StatelessWidget {
           ? const EdgeInsets.only(bottom: 10)
           : EdgeInsets.zero,
       child: Column(
+        crossAxisAlignment: isMessageBySender
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
-          ...children,
+          ...children.map((e) =>
+              Padding(padding: const EdgeInsets.only(bottom: 5), child: e)),
           Stack(
             clipBehavior: Clip.none,
             children: [
