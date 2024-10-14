@@ -256,6 +256,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
     DateTime lastMatchedDate = DateTime.now();
     return StreamBuilder<List<Message>>(
       stream: chatController?.messageStreamController.stream,
+      initialData: chatController?.initialMessageList ?? [],
       builder: (context, snapshot) {
         if (!snapshot.connectionState.isActive) {
           return Center(
