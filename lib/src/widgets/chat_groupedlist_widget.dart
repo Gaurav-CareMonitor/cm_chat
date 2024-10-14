@@ -258,12 +258,7 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
       stream: chatController?.messageStreamController.stream,
       initialData: chatController?.initialMessageList ?? [],
       builder: (context, snapshot) {
-        if (!snapshot.connectionState.isActive) {
-          return Center(
-            child: chatBackgroundConfig.loadingWidget ??
-                const CircularProgressIndicator(),
-          );
-        } else {
+        if (snapshot.data != null) {
           final messages = chatBackgroundConfig.sortEnable
               ? sortMessage(snapshot.data!)
               : snapshot.data!;
@@ -341,7 +336,14 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
               );
             },
           );
+        } else if (!snapshot.connectionState.isActive) {
+          return Center(
+            child: chatBackgroundConfig.loadingWidget ??
+                const CircularProgressIndicator(),
+          );
         }
+
+        return Container();
       },
     );
   }
