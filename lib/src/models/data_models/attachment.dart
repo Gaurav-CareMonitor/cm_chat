@@ -67,13 +67,16 @@ class ChatAttachment {
   });
 
   /// Returns the file extension of the attachment
-  String? get type {
+  String? getType(String? mimetype) {
     try {
-      return mimetype?.split('/').last;
+      if (mimetype == null) return null;
+      String type =
+          mimetype.contains('/') ? mimetype.split('/').last : mimetype;
+      return type.contains('.') ? type.split('.').last : type;
     } catch (e) {
       debugPrint("Error getting mime type: $e");
+      return null;
     }
-    return null;
   }
 
   String? get sizeStr => getFileSizeString(bytesVal: size);
