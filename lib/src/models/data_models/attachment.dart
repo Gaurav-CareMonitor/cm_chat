@@ -71,7 +71,7 @@ class ChatAttachment {
     try {
       if (mimetype == null) return null;
       String type =
-          mimetype.contains('/') ? mimetype.split('/').last : mimetype;
+          mimetype!.contains('/') ? mimetype!.split('/').last : mimetype!;
       return type.contains('.') ? type.split('.').last : type;
     } catch (e) {
       debugPrint("Error getting mime type: $e");
