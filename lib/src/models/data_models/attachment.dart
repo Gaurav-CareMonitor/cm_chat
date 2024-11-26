@@ -67,7 +67,7 @@ class ChatAttachment {
   });
 
   /// Returns the file extension of the attachment
-  String? getType(String? mimetype) {
+  String? get type {
     try {
       if (mimetype == null) return null;
       String type =
