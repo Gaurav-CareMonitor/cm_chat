@@ -20,8 +20,12 @@
  * SOFTWARE.
  */
 import 'package:chatview/chatview.dart';
+import 'package:chatview/src/models/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+
+import '../../values/enumeration.dart';
+import 'reply_message.dart';
 
 class Message {
   /// Provides id
@@ -75,10 +79,10 @@ class Message {
         _status = ValueNotifier(status),
         assert(
           (messageType.isVoice
-              ? ((defaultTargetPlatform == TargetPlatform.iOS ||
-                  defaultTargetPlatform == TargetPlatform.android))
+              ? (defaultTargetPlatform == TargetPlatform.iOS ||
+                  defaultTargetPlatform == TargetPlatform.android)
               : true),
-          "Voice messages are only supported with android and ios platform",
+          "Voice messages are only supported on Android and iOS platforms",
         );
 
   /// curret messageStatus

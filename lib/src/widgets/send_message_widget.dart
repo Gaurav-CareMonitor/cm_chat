@@ -30,8 +30,10 @@ import 'package:chatview/src/widgets/scroll_to_bottom_button.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
+import '../models/data_models/reply_message.dart';
+import '../models/models.dart';
 import '../utils/constants/constants.dart';
-import 'chat_view_inherited_widget.dart';
+import '../values/enumeration.dart';
 
 class SendMessageWidget extends StatefulWidget {
   const SendMessageWidget({
@@ -142,7 +144,7 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
                             ),
                           ),
                         Padding(
-                          key: ChatViewInheritedWidget.chatTextFieldViewKey,
+                          key: chatViewIW?.chatTextFieldViewKey,
                           padding: EdgeInsets.fromLTRB(
                             bottomPadding4,
                             bottomPadding4,

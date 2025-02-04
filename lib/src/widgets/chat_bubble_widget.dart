@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 import 'package:chatview/src/extensions/extensions.dart';
+import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/utils/constants/constants.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../chatview.dart';
+import '../values/enumeration.dart';
 import 'message_time_widget.dart';
 import 'message_view.dart';
 import 'profile_circle.dart';

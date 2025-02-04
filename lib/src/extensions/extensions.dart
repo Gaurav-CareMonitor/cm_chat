@@ -19,8 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/chatview.dart';
 import 'package:chatview/src/inherited_widgets/configurations_inherited_widgets.dart';
+import 'package:chatview/src/models/models.dart';
+import 'package:chatview/src/values/enumeration.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
 import 'package:chatview/src/widgets/profile_image_widget.dart';
 import 'package:chatview/src/widgets/suggestions/suggestions_config_inherited_widget.dart';
@@ -35,7 +36,15 @@ import '../utils/package_strings.dart';
 extension TimeDifference on DateTime {
   String getDay(String chatSeparatorDatePattern) {
     final now = DateTime.now();
-    final differenceInDays = difference(now).inDays;
+
+    /// Compares only the year, month, and day of the dates, ignoring the time.
+    /// For example, `2024-12-09 22:00` and `2024-12-10 00:05` are on different
+    /// calendar days but less than 24 hours apart. This ensures the difference
+    /// is based on the date, not the total hours between the timestamps.
+    final targetDate = DateTime(year, month, day);
+    final currentDate = DateTime(now.year, now.month, now.day);
+
+    final differenceInDays = currentDate.difference(targetDate).inDays;
 
     if (differenceInDays == 0) {
       if (now.day - 1 == day) {
@@ -168,6 +177,9 @@ extension BuildContextExtension on BuildContext {
               chatBackgroundConfig: ChatBackgroundConfiguration(),
               child: SizedBox.shrink(),
             );
+
+  ChatBubbleConfiguration? get chatBubbleConfig =>
+      chatListConfig.chatBubbleConfig;
 }
 
 extension ScrollControllerExtension on ScrollController {

@@ -1,4 +1,4 @@
-import '../../../chatview.dart';
+import '../../values/enumeration.dart';
 
 class FeatureActiveConfig {
   const FeatureActiveConfig({

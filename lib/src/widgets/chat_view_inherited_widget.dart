@@ -1,4 +1,5 @@
 import 'package:chatview/chatview.dart';
+import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/widgets/reaction_popup.dart';
 import 'package:flutter/material.dart';
 
@@ -10,12 +11,13 @@ class ChatViewInheritedWidget extends InheritedWidget {
     required Widget child,
     required this.featureActiveConfig,
     required this.chatController,
+    required this.chatTextFieldViewKey,
     this.profileCircleConfiguration,
   }) : super(key: key, child: child);
   final FeatureActiveConfig featureActiveConfig;
   final ProfileCircleConfiguration? profileCircleConfiguration;
   final ChatController chatController;
-  static final GlobalKey chatTextFieldViewKey = GlobalKey();
+  final GlobalKey chatTextFieldViewKey;
   final ValueNotifier<bool> showPopUp = ValueNotifier(false);
   final GlobalKey<ReactionPopupState> reactionPopupKey = GlobalKey();
 

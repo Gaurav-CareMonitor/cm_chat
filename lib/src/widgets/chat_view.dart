@@ -24,6 +24,7 @@ import 'dart:io';
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/inherited_widgets/configurations_inherited_widgets.dart';
+import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/widgets/chat_list_widget.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
 import 'package:chatview/src/widgets/chatview_state_widget.dart';
@@ -31,8 +32,11 @@ import 'package:chatview/src/widgets/reaction_popup.dart';
 import 'package:chatview/src/widgets/suggestions/suggestions_config_inherited_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:timeago/timeago.dart';
+
+import '../models/data_models/reply_message.dart';
+import '../utils/timeago/timeago.dart';
 import '../values/custom_time_messages.dart';
+import '../values/enumeration.dart';
 import 'send_message_widget.dart';
 
 class ChatView extends StatefulWidget {
@@ -179,10 +183,13 @@ class _ChatViewState extends State<ChatView>
 
   FeatureActiveConfig get featureActiveConfig => widget.featureActiveConfig;
 
+  late GlobalKey chatTextFieldViewKey;
+
   @override
   void initState() {
     super.initState();
     setLocaleMessages('en', ReceiptsCustomMessages());
+    chatTextFieldViewKey = GlobalKey();
   }
 
   @override
@@ -196,6 +203,7 @@ class _ChatViewState extends State<ChatView>
       chatController: chatController,
       featureActiveConfig: featureActiveConfig,
       profileCircleConfiguration: widget.profileCircleConfig,
+      chatTextFieldViewKey: chatTextFieldViewKey,
       child: SuggestionsConfigIW(
         suggestionsConfig: widget.replySuggestionsConfig,
         child: Builder(builder: (context) {

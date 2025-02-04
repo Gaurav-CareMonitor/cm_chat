@@ -19,7 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/chatview.dart';
+import '../../values/enumeration.dart';
+import '../models.dart';
 
 class ReplyMessage {
   /// Provides reply message.

@@ -19,8 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/chatview.dart';
 import 'package:flutter/material.dart';
+
+import '../data_models/chat_user.dart';
 
 class SwipeToReplyConfiguration {
   /// Used to give color of reply icon while swipe to reply.
