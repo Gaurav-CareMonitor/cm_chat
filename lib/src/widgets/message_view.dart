@@ -24,9 +24,7 @@ import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
 import '../utils/constants/constants.dart';
-import '../values/enumeration.dart';
 import 'image_message_view.dart';
 import 'reaction_widget.dart';
 import 'text_message_view.dart';

@@ -23,7 +23,6 @@ import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
-import '../values/enumeration.dart';
 import 'chat_view_inherited_widget.dart';
 
 class MessageTimeWidget extends StatelessWidget {

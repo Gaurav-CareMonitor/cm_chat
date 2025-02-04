@@ -1,5 +1,4 @@
 import 'package:chatview/chatview.dart';
-import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/widgets/reaction_popup.dart';
 import 'package:flutter/material.dart';
 

@@ -23,9 +23,6 @@ import 'package:chatview/chatview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../values/enumeration.dart';
-import 'reply_message.dart';
-
 class Message {
   /// Provides id
   final String id;

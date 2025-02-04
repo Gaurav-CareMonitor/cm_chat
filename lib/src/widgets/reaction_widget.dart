@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/utils/measure_size.dart';
 import 'package:chatview/src/widgets/reactions_bottomsheet.dart';
 import 'package:flutter/material.dart';

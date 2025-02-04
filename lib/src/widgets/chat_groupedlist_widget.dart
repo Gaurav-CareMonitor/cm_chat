@@ -21,13 +21,10 @@
  */
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/models/models.dart';
-import 'package:chatview/src/values/enumeration.dart';
 import 'package:chatview/src/widgets/suggestions/suggestion_list.dart';
 import 'package:chatview/src/widgets/type_indicator_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../models/data_models/reply_message.dart';
 import 'chat_bubble_widget.dart';
 import 'chat_group_header.dart';
 

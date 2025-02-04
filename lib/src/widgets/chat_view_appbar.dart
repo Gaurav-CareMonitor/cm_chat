@@ -26,7 +26,6 @@ import 'package:flutter/material.dart';
 
 import '../../chatview.dart';
 import '../utils/constants/constants.dart';
-import '../values/enumeration.dart';
 import 'profile_image_widget.dart';
 
 class ChatViewAppBar extends StatelessWidget {
