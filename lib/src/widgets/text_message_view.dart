@@ -25,7 +25,9 @@ import 'package:chatview/src/widgets/message_time_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:linkify_plus/linkify_plus.dart';
 
+import '../models/models.dart';
 import '../utils/constants/constants.dart';
+import '../values/enumeration.dart';
 import 'chat_view_inherited_widget.dart';
 import 'link_preview.dart';
 import 'reaction_widget.dart';

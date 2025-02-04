@@ -22,7 +22,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../chatview.dart';
+import '../../models/models.dart';
+import '../../values/enumeration.dart';
 import '../../widgets/chat_message_sending_to_sent_animation.dart';
 import '../timeago/timeago.dart' as timeago;
 

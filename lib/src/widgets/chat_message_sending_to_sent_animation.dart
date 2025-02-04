@@ -1,7 +1,8 @@
 import 'dart:math';
 
-import 'package:chatview/chatview.dart';
 import 'package:flutter/material.dart';
+
+import '../values/enumeration.dart';
 
 class SendingMessageAnimatingWidget extends StatefulWidget {
   const SendingMessageAnimatingWidget(this.status, {Key? key})

@@ -23,6 +23,8 @@ import 'package:flutter/material.dart';
 
 import '../../../chatview.dart';
 import '../../utils/constants/constants.dart';
+import '../../values/enumeration.dart';
+import '../models.dart';
 
 class ProfileCircleConfiguration {
   /// Used to give padding to profile circle.

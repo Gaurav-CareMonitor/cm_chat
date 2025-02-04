@@ -24,6 +24,7 @@ import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/widgets/glassmorphism_reaction_popup.dart';
 import 'package:flutter/material.dart';
 
+import '../models/models.dart';
 import 'emoji_row.dart';
 
 class ReactionPopup extends StatefulWidget {

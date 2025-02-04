@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 import 'dart:io' if (kIsWeb) 'dart:html';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../chatview.dart';
 import '../utils/constants/constants.dart';
+import '../values/enumeration.dart';
 import 'profile_image_widget.dart';
 
 class ChatViewAppBar extends StatelessWidget {

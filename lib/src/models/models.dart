@@ -46,4 +46,5 @@ export 'data_models/attachment.dart';
 export 'data_models/chat_user.dart';
 export 'data_models/message.dart';
 export 'data_models/reaction.dart';
+export 'data_models/reply_message.dart';
 export 'data_models/suggestion_item_data.dart';

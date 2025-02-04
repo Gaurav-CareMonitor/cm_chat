@@ -21,8 +21,10 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import '../../../chatview.dart';
+
 import '../../utils/constants/constants.dart';
+import '../../values/enumeration.dart';
+import '../models.dart';
 
 class ReceiptsWidgetConfig {
   /// The builder that builds widget that right next to the senders message bubble.
