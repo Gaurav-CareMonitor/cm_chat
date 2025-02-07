@@ -97,11 +97,23 @@ class ChatAttachment {
         'id': id,
       };
 
-  factory ChatAttachment.fromMap(Map<String, dynamic> map) => ChatAttachment(
-        url: map['url'],
-        name: map['name'],
-        mimetype: map['type'],
-        size: map['size'],
-        id: map['id'],
+  factory ChatAttachment.fromMap(Map<dynamic, dynamic> map) => ChatAttachment(
+        url: map['url']?.toString() ?? "",
+        name: map['name']?.toString() ?? "",
+        mimetype: map['type']?.toString() ?? "",
+        size: map['size'] is int ? map['size'] as int : null,
+        id: map['id']?.toString() ?? "",
       );
+
+  factory ChatAttachment.fromBackend(Map<dynamic, dynamic> json,
+      {required String url}) {
+    Map fileInfo = json['fileInfo'] is Map ? json['fileInfo'] as Map : {};
+    return ChatAttachment(
+      id: json['id'],
+      name: fileInfo['originalname']?.toString(),
+      mimetype: fileInfo['mimetype']?.toString(),
+      size: (fileInfo['size'] is int) ? (fileInfo['size'] as int) : null,
+      url: url.replaceAll(':id', json['id'] ?? ""),
+    );
+  }
 }
