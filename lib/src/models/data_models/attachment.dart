@@ -106,14 +106,14 @@ class ChatAttachment {
       );
 
   factory ChatAttachment.fromBackend(Map<dynamic, dynamic> json,
-      {required String url}) {
+      {required String Function(String?) url}) {
     Map fileInfo = json['fileInfo'] is Map ? json['fileInfo'] as Map : {};
     return ChatAttachment(
       id: json['id'],
       name: fileInfo['originalname']?.toString(),
       mimetype: fileInfo['mimetype']?.toString(),
       size: (fileInfo['size'] is int) ? (fileInfo['size'] as int) : null,
-      url: url.replaceAll(':id', json['id'] ?? ""),
+      url: url.call(json['id']?.toString()),
     );
   }
 }
