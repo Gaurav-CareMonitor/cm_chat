@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/models/models.dart';
+import 'package:chatview/src/widgets/cached_image.dart' show CachedImage;
 import 'package:flutter/material.dart';
 
 import 'reaction_widget.dart';
@@ -98,11 +98,9 @@ class ImageMessageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment:
-          isMessageBySender ? MainAxisAlignment.end : MainAxisAlignment.start,
+      mainAxisAlignment: isMessageBySender ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
-        if (isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
-          iconButton,
+        if (isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false)) iconButton,
         Stack(
           alignment: Alignment.bottomRight,
           clipBehavior: Clip.none,
@@ -112,66 +110,40 @@ class ImageMessageView extends StatelessWidget {
               margin: _margin,
               decoration: BoxDecoration(
                 color: _color,
-                borderRadius: imageMessageConfig?.borderRadius ??
-                    BorderRadius.circular(16),
+                borderRadius: imageMessageConfig?.borderRadius ?? BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
                   GestureDetector(
-                    onTap: () => imageMessageConfig?.onTap != null
-                        ? imageMessageConfig?.onTap!(message)
-                        : null,
+                    onTap: () => imageMessageConfig?.onTap != null ? imageMessageConfig?.onTap!(message) : null,
                     child: Transform.scale(
                       scale: highlightImage ? highlightScale : 1.0,
-                      alignment: isMessageBySender
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                      alignment: isMessageBySender ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        padding: imageMessageConfig?.padding ??
-                            const EdgeInsets.all(5),
+                        padding: imageMessageConfig?.padding ?? const EdgeInsets.all(5),
                         height: imageMessageConfig?.height ?? 200,
                         width: imageMessageConfig?.width ?? 150,
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           color: _color,
-                          borderRadius: imageMessageConfig?.borderRadius ??
-                              BorderRadius.circular(16),
+                          borderRadius: imageMessageConfig?.borderRadius ?? BorderRadius.circular(16),
                         ),
                         child: ClipRRect(
-                          borderRadius: imageMessageConfig?.borderRadius ??
-                              BorderRadius.circular(14),
+                          borderRadius: imageMessageConfig?.borderRadius ?? BorderRadius.circular(14),
                           child: (() {
                             if (imageUrl.isUrl) {
-                              return Image.network(
-                                imageUrl,
-                                fit: BoxFit.fitHeight,
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                    ),
-                                  );
-                                },
-                              );
+                              return CachedImage.network(imageUrl, fit: BoxFit.fitHeight, enableTapToOpen: true);
                             } else if (imageUrl.fromMemory) {
-                              return Image.memory(
-                                base64Decode(imageUrl
-                                    .substring(imageUrl.indexOf('base64') + 7)),
+                              return CachedImage.memory(
+                                base64Decode(imageUrl.substring(imageUrl.indexOf('base64') + 7)),
                                 fit: BoxFit.fitHeight,
+                                enableTapToOpen: true,
                               );
                             } else {
-                              return Image.file(
-                                File(imageUrl),
+                              return CachedImage.file(
+                                imageUrl,
                                 fit: BoxFit.fitHeight,
+                                enableTapToOpen: true,
                               );
                             }
                           }()),
@@ -201,8 +173,7 @@ class ImageMessageView extends StatelessWidget {
               ),
           ],
         ),
-        if (!isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false))
-          iconButton,
+        if (!isMessageBySender && !(imageMessageConfig?.hideShareIcon ?? false)) iconButton,
       ],
     );
   }

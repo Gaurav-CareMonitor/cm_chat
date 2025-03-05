@@ -84,9 +84,7 @@ class TextMessageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final textMessage = message.message;
-    final messageTimePositionType = ChatViewInheritedWidget.of(context)
-            ?.featureActiveConfig
-            .messageTimePositionType ??
+    final messageTimePositionType = ChatViewInheritedWidget.of(context)?.featureActiveConfig.messageTimePositionType ??
         MessageTimePositionType.onRightSwipe;
     final defaultTextStyle = textTheme.bodyMedium!.copyWith(
       color: Colors.white,
@@ -102,40 +100,30 @@ class TextMessageView extends StatelessWidget {
     final isSenderMessageOrURl = isMessageBySender || textMessage.isUrl;
 
     return Padding(
-      padding: messageTimePositionType.isOutSideChatBubbleAtBottom
-          ? const EdgeInsets.only(bottom: 10)
-          : EdgeInsets.zero,
+      padding:
+          messageTimePositionType.isOutSideChatBubbleAtBottom ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
       child: Column(
-        crossAxisAlignment: isMessageBySender
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+        crossAxisAlignment: isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          ...children.map((e) =>
-              Padding(padding: const EdgeInsets.only(bottom: 5), child: e)),
+          ...children.map((e) => Padding(padding: const EdgeInsets.only(bottom: 5), child: e)),
           Stack(
             clipBehavior: Clip.none,
             children: [
               if (textMessage.isNotEmpty)
                 Container(
-                  constraints: BoxConstraints(
-                      maxWidth: chatBubbleMaxWidth ??
-                          MediaQuery.of(context).size.width * 0.75),
+                  constraints: BoxConstraints(maxWidth: chatBubbleMaxWidth ?? MediaQuery.of(context).size.width * 0.75),
                   padding: _padding ??
                       const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
-                  margin: _margin ??
-                      EdgeInsets.fromLTRB(5, 0, 6,
-                          message.reaction.reactions.isNotEmpty ? 15 : 2),
+                  margin: _margin ?? EdgeInsets.fromLTRB(5, 0, 6, message.reaction.reactions.isNotEmpty ? 15 : 2),
                   decoration: BoxDecoration(
                     color: highlightMessage ? highlightColor : _color,
                     borderRadius: _borderRadius(textMessage),
                   ),
                   child: Column(
-                    crossAxisAlignment: isMessageBySender
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
+                    crossAxisAlignment: isMessageBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       textMessage.isUrl
@@ -145,13 +133,10 @@ class TextMessageView extends StatelessWidget {
                             )
                           : Wrap(
                               alignment: WrapAlignment.end,
-                              spacing:
-                                  messageMetaData.numberOfLine < 2 ? 10 : 0,
+                              spacing: messageMetaData.numberOfLine < 2 ? 10 : 0,
                               children: [
                                 Linkify(
-                                  textScaleFactor: MediaQuery.of(context)
-                                      .textScaler
-                                      .scale(1),
+                                  textScaleFactor: MediaQuery.of(context).textScaler.scale(1),
                                   text: textMessage,
                                   linkStyle: _linkStyle ??
                                       textTheme.bodyMedium!.copyWith(
@@ -159,8 +144,7 @@ class TextMessageView extends StatelessWidget {
                                         fontSize: 16,
                                         decoration: TextDecoration.underline,
                                       ),
-                                  onOpen: (e) =>
-                                      messageConfig?.onUrlTap?.call(e.url),
+                                  onOpen: (e) => messageConfig?.onUrlTap?.call(e.url),
                                   style: _textStyle ??
                                       textTheme.bodyMedium!.copyWith(
                                         color: Colors.white,
@@ -175,26 +159,22 @@ class TextMessageView extends StatelessWidget {
                                 if (messageTimePositionType.isInsideChatBubble)
                                   Transform.translate(
                                     offset: const Offset(0, 8),
-                                    child: messageDateTimeBuilder
-                                            ?.call(message.createdAt) ??
+                                    child: messageDateTimeBuilder?.call(message.createdAt) ??
                                         MessageTimeWidget(
                                           messageTime: message.createdAt,
                                           isCurrentUser: isMessageBySender,
-                                          messageTimeTextStyle:
-                                              messageTimeTextStyle,
+                                          messageTimeTextStyle: messageTimeTextStyle,
                                         ),
                                   ),
                               ],
                             ),
-                      if (messageTimePositionType.isInsideChatBubblev2)
-                        _wBottom()
+                      if (messageTimePositionType.isInsideChatBubblev2) _wBottom()
                     ],
                   ),
                 ),
-              if (messageTimePositionType.isInsideChatBubblev2 &&
-                  message.message.isEmpty)
+              if (messageTimePositionType.isInsideChatBubblev2 && message.message.isEmpty)
                 Padding(
-                  padding: _padding ?? EdgeInsets.zero,
+                  padding: EdgeInsets.only(left: isMessageBySender ? 0 : 10, right: isMessageBySender ? 10 : 0),
                   child: _wBottom(),
                 ),
               if (message.reaction.reactions.isNotEmpty)
@@ -206,8 +186,7 @@ class TextMessageView extends StatelessWidget {
                 ),
               if (messageTimePositionType.isOutSideChatBubbleAtBottom)
                 Positioned(
-                  bottom: messageMetaData.numberOfLine <= 1 &&
-                          messageMetaData.messageWidth <= 90
+                  bottom: messageMetaData.numberOfLine <= 1 && messageMetaData.messageWidth <= 90
                       ? -18
                       : message.reaction.reactions.isNotEmpty
                           ? -4
@@ -276,45 +255,31 @@ class TextMessageView extends StatelessWidget {
       ),
       textDirection: TextDirection.ltr,
     )..layout(
-        maxWidth:
-            (chatBubbleMaxWidth ?? MediaQuery.of(context).size.width * 0.75) -
-                (_padding?.horizontal ?? 24));
+        maxWidth: (chatBubbleMaxWidth ?? MediaQuery.of(context).size.width * 0.75) - (_padding?.horizontal ?? 24));
 
-    return (
-      numberOfLine: textPainter.computeLineMetrics().length,
-      messageWidth: textPainter.width
-    );
+    return (numberOfLine: textPainter.computeLineMetrics().length, messageWidth: textPainter.width);
   }
 
-  EdgeInsetsGeometry? get _padding => isMessageBySender
-      ? outgoingChatBubbleConfig?.padding
-      : inComingChatBubbleConfig?.padding;
+  EdgeInsetsGeometry? get _padding =>
+      isMessageBySender ? outgoingChatBubbleConfig?.padding : inComingChatBubbleConfig?.padding;
 
-  EdgeInsetsGeometry? get _margin => isMessageBySender
-      ? outgoingChatBubbleConfig?.margin
-      : inComingChatBubbleConfig?.margin;
+  EdgeInsetsGeometry? get _margin =>
+      isMessageBySender ? outgoingChatBubbleConfig?.margin : inComingChatBubbleConfig?.margin;
 
-  LinkPreviewConfiguration? get _linkPreviewConfig => isMessageBySender
-      ? outgoingChatBubbleConfig?.linkPreviewConfig
-      : inComingChatBubbleConfig?.linkPreviewConfig;
+  LinkPreviewConfiguration? get _linkPreviewConfig =>
+      isMessageBySender ? outgoingChatBubbleConfig?.linkPreviewConfig : inComingChatBubbleConfig?.linkPreviewConfig;
 
-  TextStyle? get _textStyle => isMessageBySender
-      ? outgoingChatBubbleConfig?.textStyle
-      : inComingChatBubbleConfig?.textStyle;
+  TextStyle? get _textStyle =>
+      isMessageBySender ? outgoingChatBubbleConfig?.textStyle : inComingChatBubbleConfig?.textStyle;
 
-  TextStyle? get _linkStyle => isMessageBySender
-      ? outgoingChatBubbleConfig?.linkStyle
-      : inComingChatBubbleConfig?.linkStyle;
+  TextStyle? get _linkStyle =>
+      isMessageBySender ? outgoingChatBubbleConfig?.linkStyle : inComingChatBubbleConfig?.linkStyle;
 
   BorderRadiusGeometry _borderRadius(String message) => isMessageBySender
       ? outgoingChatBubbleConfig?.borderRadius ??
-          (message.length < 37
-              ? BorderRadius.circular(replyBorderRadius1)
-              : BorderRadius.circular(replyBorderRadius2))
+          (message.length < 37 ? BorderRadius.circular(replyBorderRadius1) : BorderRadius.circular(replyBorderRadius2))
       : inComingChatBubbleConfig?.borderRadius ??
-          (message.length < 29
-              ? BorderRadius.circular(replyBorderRadius1)
-              : BorderRadius.circular(replyBorderRadius2));
+          (message.length < 29 ? BorderRadius.circular(replyBorderRadius1) : BorderRadius.circular(replyBorderRadius2));
 
   Color get _color => isMessageBySender
       ? outgoingChatBubbleConfig?.color ?? Colors.purple
