@@ -50,14 +50,11 @@ class CachedImage extends StatelessWidget {
           height: height,
           fit: fit,
           maxBytes: 1000 * 1000, // 1MB
-          loadStateChanged: (state) => _loadStateChanged(
-            state,
-            placeholder,
-            errorWidget,
-            width,
-            height,
-          ),
-          mode: enableTapToOpen ? ExtendedImageMode.gesture : ExtendedImageMode.none,
+          loadStateChanged: (state) =>
+              _loadStateChanged(state, placeholder, errorWidget, width, height),
+          mode: enableTapToOpen
+              ? ExtendedImageMode.gesture
+              : ExtendedImageMode.none,
         );
       },
       url: url,
@@ -93,14 +90,11 @@ class CachedImage extends StatelessWidget {
           width: width,
           height: height,
           fit: fit,
-          loadStateChanged: (state) => _loadStateChanged(
-            state,
-            placeholder,
-            errorWidget,
-            width,
-            height,
-          ),
-          mode: enableTapToOpen ? ExtendedImageMode.gesture : ExtendedImageMode.none,
+          loadStateChanged: (state) =>
+              _loadStateChanged(state, placeholder, errorWidget, width, height),
+          mode: enableTapToOpen
+              ? ExtendedImageMode.gesture
+              : ExtendedImageMode.none,
         );
       },
       bytes: bytes,
@@ -136,14 +130,11 @@ class CachedImage extends StatelessWidget {
           width: width,
           height: height,
           fit: fit,
-          loadStateChanged: (state) => _loadStateChanged(
-            state,
-            placeholder,
-            errorWidget,
-            width,
-            height,
-          ),
-          mode: enableTapToOpen ? ExtendedImageMode.gesture : ExtendedImageMode.none,
+          loadStateChanged: (state) =>
+              _loadStateChanged(state, placeholder, errorWidget, width, height),
+          mode: enableTapToOpen
+              ? ExtendedImageMode.gesture
+              : ExtendedImageMode.none,
         );
       },
       assetName: assetName,
@@ -179,14 +170,11 @@ class CachedImage extends StatelessWidget {
           width: width,
           height: height,
           fit: fit,
-          loadStateChanged: (state) => _loadStateChanged(
-            state,
-            placeholder,
-            errorWidget,
-            width,
-            height,
-          ),
-          mode: enableTapToOpen ? ExtendedImageMode.gesture : ExtendedImageMode.none,
+          loadStateChanged: (state) =>
+              _loadStateChanged(state, placeholder, errorWidget, width, height),
+          mode: enableTapToOpen
+              ? ExtendedImageMode.gesture
+              : ExtendedImageMode.none,
         );
       },
       filePath: filePath,
@@ -239,10 +227,9 @@ class CachedImage extends StatelessWidget {
     switch (state.extendedImageLoadState) {
       case LoadState.loading:
         return SizedBox(
-          height: height,
-          width: width,
-          child: placeholder ?? _buildPlaceholder(width, height),
-        );
+            height: height,
+            width: width,
+            child: placeholder ?? _buildPlaceholder(width, height));
       case LoadState.failed:
         return _buildErrorWidget(errorWidget, width, height);
 
@@ -262,17 +249,10 @@ class CachedImage extends StatelessWidget {
   }
 
   /// Default error widget
-  static Widget _buildErrorWidget(
-    Widget? errorWidget, [
-    double? width,
-    double? height,
-  ]) {
+  static Widget _buildErrorWidget(Widget? errorWidget,
+      [double? width, double? height]) {
     if (errorWidget != null) {
-      return SizedBox(
-        height: height,
-        width: width,
-        child: errorWidget,
-      );
+      return SizedBox(height: height, width: width, child: errorWidget);
     }
     return Container(
       alignment: Alignment.center,
@@ -284,7 +264,12 @@ class CachedImage extends StatelessWidget {
   }
 
   String get _heroTag =>
-      heroTag ?? url ?? bytes?.firstOrNull?.toString() ?? assetName?.toString() ?? filePath?.toString() ?? 'image';
+      heroTag ??
+      url ??
+      bytes?.firstOrNull?.toString() ??
+      assetName?.toString() ??
+      filePath?.toString() ??
+      'image';
 
   /// Wraps the image in a [Hero] widget if animation is enabled
   Widget _wrapWithHero(Widget child) {
@@ -309,7 +294,7 @@ class CachedImage extends StatelessWidget {
     }
     Navigator.push(
       context,
-      PageRouteBuilder(
+      PageRouteBuilder<dynamic>(
         opaque: false,
         barrierColor: Colors.transparent,
         pageBuilder: (context, animation1, animation2) => ImageViewerPage(
@@ -318,7 +303,7 @@ class CachedImage extends StatelessWidget {
           sourceAsset: assetName,
           sourceFile: filePath,
           fit: BoxFit.contain,
-          heroTag: (hasAnimation ?? false) ? _heroTag : null,
+          heroTag: _heroTag,
         ),
       ),
     );
@@ -333,7 +318,9 @@ class CachedImage extends StatelessWidget {
       child: _wrapWithHero(
         enableTapToOpen
             ? GestureDetector(
-                onTap: onTap ?? () => _openImageView(context, imageWidget, url, bytes, assetName, filePath),
+                onTap: onTap ??
+                    () => _openImageView(
+                        context, imageWidget, url, bytes, assetName, filePath),
                 child: imageWidget,
               )
             : imageWidget,
@@ -366,7 +353,8 @@ class ImageViewerPage extends StatefulWidget {
 }
 
 class _ImageViewerPageState extends State<ImageViewerPage> {
-  final StreamController<bool> rebuildSwiper = StreamController<bool>.broadcast();
+  final StreamController<bool> rebuildSwiper =
+      StreamController<bool>.broadcast();
   bool _showSwiper = true;
 
   @override
@@ -385,7 +373,7 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
         fit: widget.fit,
         mode: ExtendedImageMode.gesture,
         enableSlideOutPage: true,
-        initGestureConfigHandler: (state) => GestureConfig(inPageView: true, initialScale: 0.8),
+        initGestureConfigHandler: (state) => GestureConfig(inPageView: true),
       );
     } else if (widget.sourceBytes != null) {
       image = ExtendedImage.memory(
@@ -393,7 +381,7 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
         fit: widget.fit,
         enableSlideOutPage: true,
         mode: ExtendedImageMode.gesture,
-        initGestureConfigHandler: (state) => GestureConfig(inPageView: true, initialScale: 0.8),
+        initGestureConfigHandler: (state) => GestureConfig(inPageView: true),
       );
     } else if (widget.sourceAsset != null) {
       image = ExtendedImage.asset(
@@ -401,7 +389,7 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
         fit: widget.fit,
         enableSlideOutPage: true,
         mode: ExtendedImageMode.gesture,
-        initGestureConfigHandler: (state) => GestureConfig(inPageView: true, initialScale: 0.8),
+        initGestureConfigHandler: (state) => GestureConfig(inPageView: true),
       );
     } else if (widget.sourceFile != null) {
       image = ExtendedImage.file(
@@ -409,17 +397,14 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
         fit: widget.fit,
         enableSlideOutPage: true,
         mode: ExtendedImageMode.gesture,
-        initGestureConfigHandler: (state) => GestureConfig(inPageView: true, initialScale: 0.8),
+        initGestureConfigHandler: (state) => GestureConfig(inPageView: true),
       );
     } else {
       image = Container();
     }
 
     final result = widget.heroTag != null
-        ? Hero(
-            tag: widget.heroTag!,
-            child: image,
-          )
+        ? Hero(tag: widget.heroTag!, child: image)
         : image;
 
     return Stack(
@@ -436,17 +421,23 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
           slideType: SlideType.wholePage,
           slidePageBackgroundHandler: (offset, pageSize) {
             num opacity = 0;
-            opacity = offset.distance / (Offset(pageSize.width, pageSize.height).distance / 2.0);
-            return Colors.black.withValues(alpha: min(1, max(1.0 - opacity, 0)));
+            opacity = offset.distance /
+                (Offset(pageSize.width, pageSize.height).distance / 2.0);
+            return Colors.black
+                .withValues(alpha: min(1, max(1.0 - opacity, 0)));
           },
           slideScaleHandler: (offset, {ExtendedImageSlidePageState? state}) {
             if (state == null) return 0.8;
-            final scale = offset.distance / Offset(state.pageSize.width, state.pageSize.height).distance;
+            final scale = offset.distance /
+                Offset(state.pageSize.width, state.pageSize.height).distance;
             return max(1.0 - scale, 0.8);
           },
-          slideEndHandler: (offset, {ScaleEndDetails? details, ExtendedImageSlidePageState? state}) {
+          slideEndHandler: (offset,
+              {ScaleEndDetails? details, ExtendedImageSlidePageState? state}) {
             if (state == null) return false;
-            return offset.distance > Offset(state.pageSize.width, state.pageSize.height).distance / 3.5;
+            return offset.distance >
+                Offset(state.pageSize.width, state.pageSize.height).distance /
+                    3.5;
           },
           child: result,
         ),
