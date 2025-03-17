@@ -78,19 +78,19 @@ class LinkPreview extends StatelessWidget {
               ),
             ),
           } else ...{
-            if(url.isImageUrl)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: verticalPadding),
-              child: InkWell(
-                onTap: _onLinkTap,
-                child: Image.network(
-                  url,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
+            if (url.isImageUrl)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: verticalPadding),
+                child: InkWell(
+                  onTap: _onLinkTap,
+                  child: Image.network(
+                    url,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
               ),
-            ),
           },
           const SizedBox(height: verticalPadding),
           InkWell(
