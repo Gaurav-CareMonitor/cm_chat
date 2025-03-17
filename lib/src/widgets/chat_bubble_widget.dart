@@ -296,6 +296,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
                 messagedUser?.name ?? '',
+                textAlign: TextAlign.right,
                 style: chatListConfig.chatBubbleConfig?.outgoingChatBubbleConfig
                     ?.senderNameTextStyle,
               ),
