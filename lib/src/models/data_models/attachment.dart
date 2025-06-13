@@ -52,11 +52,11 @@ enum MediaType {
 }
 
 class ChatAttachment {
-  final String? id;
-  final String url;
-  final String? name;
-  final String? mimetype;
-  final int? size;
+  String? id;
+  String url;
+  String? name;
+  String? mimetype;
+  int? size;
 
   ChatAttachment({
     this.id,
@@ -66,12 +66,13 @@ class ChatAttachment {
     this.size,
   });
 
+  bool get isLocal => (url.startsWith('file://') || !Uri.parse(url).hasScheme) && File(url).existsSync();
+
   /// Returns the file extension of the attachment
   String? get type {
     try {
       if (mimetype == null) return null;
-      String type =
-          mimetype!.contains('/') ? mimetype!.split('/').last : mimetype!;
+      String type = mimetype!.contains('/') ? mimetype!.split('/').last : mimetype!;
       return type.contains('.') ? type.split('.').last : type;
     } catch (e) {
       debugPrint("Error getting mime type: $e");
@@ -105,8 +106,7 @@ class ChatAttachment {
         id: map['id']?.toString() ?? "",
       );
 
-  factory ChatAttachment.fromBackend(Map<dynamic, dynamic> json,
-      {required String Function(String?) url}) {
+  factory ChatAttachment.fromBackend(Map<dynamic, dynamic> json, {required String Function(String?) url}) {
     Map fileInfo = json['fileInfo'] is Map ? json['fileInfo'] as Map : {};
     return ChatAttachment(
       id: json['id'],
