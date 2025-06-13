@@ -22,7 +22,7 @@ enum MediaType {
     "mpeg",
     "mpg"
   ]),
-  audio(mimeTypes: ["flac", "ogg", "wav", "mp3", "mid", "wma", "aac"]),
+  audio(mimeTypes: ["flac", "ogg", "wav", "mp3", "mid", "wma", "aac", "x-wav"]),
   pdf(mimeTypes: ["pdf", "x-pdf", "vnd.pdf"]),
   file;
 
@@ -72,6 +72,7 @@ class ChatAttachment {
   String? get type {
     try {
       if (mimetype == null) return null;
+
       String type = mimetype!.contains('/') ? mimetype!.split('/').last : mimetype!;
       return type.contains('.') ? type.split('.').last : type;
     } catch (e) {
