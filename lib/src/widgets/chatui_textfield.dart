@@ -23,14 +23,17 @@ import 'dart:async';
 import 'dart:io' show File, Platform;
 
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:chatview/src/utils/constants/constants.dart';
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../chatview.dart';
+import '../models/config_models/send_message_configuration.dart';
+import '../utils/constants/constants.dart';
 import '../utils/debounce.dart';
 import '../utils/package_strings.dart';
+import '../values/typedefs.dart';
 
 class ChatUITextField extends StatefulWidget {
   const ChatUITextField({
@@ -53,10 +56,10 @@ class ChatUITextField extends StatefulWidget {
   final TextEditingController textEditingController;
 
   /// Provides callback when user tap on text field.
-  final VoidCallBack onPressed;
+  final VoidCallback onPressed;
 
   /// Provides callback once voice is recorded.
-  final Function(String?) onRecordingComplete;
+  final ValueSetter<String?> onRecordingComplete;
 
   /// Provides callback when user select images from camera/gallery.
   final StringsCallBack onImageSelected;
@@ -73,6 +76,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
   RecorderController? controller;
 
   ValueNotifier<bool> isRecording = ValueNotifier(false);
+
+  bool Function(KeyEvent)? _keyboardHandler;
 
   SendMessageConfiguration? get sendMessageConfig => widget.sendMessageConfig;
 
@@ -110,6 +115,12 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
       controller = RecorderController();
     }
+    if (kIsWeb) {
+      if (_attachHardwareKeyboardHandler() case final handler) {
+        _keyboardHandler = handler;
+        HardwareKeyboard.instance.addHandler(handler);
+      }
+    }
   }
 
   @override
@@ -118,6 +129,9 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     composingStatus.dispose();
     isRecording.dispose();
     _inputText.dispose();
+    if (_keyboardHandler case final handler?) {
+      HardwareKeyboard.instance.removeHandler(handler);
+    }
     super.dispose();
   }
 
@@ -126,6 +140,47 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       widget.sendMessageConfig?.textFieldConfig?.onMessageTyping
           ?.call(composingStatus.value);
     });
+  }
+
+  // Attaches a hardware keyboard handler to handle Enter key events.
+  // This is only applicable for web platforms.
+  // It checks if the Enter key is pressed then sends the message
+  // or inserts a new line based on whether Enter + Shift is pressed.
+  bool Function(KeyEvent) _attachHardwareKeyboardHandler() {
+    return (KeyEvent event) {
+      if (event is! KeyDownEvent ||
+          event.logicalKey != LogicalKeyboardKey.enter) {
+        return false;
+      }
+
+      final pressedKeys = HardwareKeyboard.instance.logicalKeysPressed;
+      final isShiftPressed = pressedKeys.any((key) =>
+          key == LogicalKeyboardKey.shiftLeft ||
+          key == LogicalKeyboardKey.shiftRight);
+      if (!isShiftPressed) {
+        // Send message on Enter
+        if (_inputText.value.trim().isNotEmpty) {
+          widget.onPressed();
+          _inputText.value = '';
+        }
+      } else {
+        // Shift+Enter: insert new line
+        final text = widget.textEditingController.text;
+        final selection = widget.textEditingController.selection;
+
+        // Insert a newline ('\n') at the current cursor position or
+        // replace selected text with it.
+        final newText = text.replaceRange(
+          selection.start,
+          selection.end,
+          '\n',
+        );
+        widget.textEditingController
+          ..text = newText
+          ..selection = TextSelection.collapsed(offset: selection.start + 1);
+      }
+      return true;
+    };
   }
 
   @override
@@ -186,8 +241,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                     textCapitalization: textFieldConfig?.textCapitalization ??
                         TextCapitalization.sentences,
                     decoration: InputDecoration(
-                      hintText:
-                          textFieldConfig?.hintText ?? PackageStrings.message,
+                      hintText: textFieldConfig?.hintText ??
+                          PackageStrings.currentLocale.message,
                       fillColor: sendMessageConfig?.textFieldBackgroundColor ??
                           Colors.white,
                       filled: true,
@@ -353,7 +408,9 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     ImageSource imageSource, {
     ImagePickerConfiguration? config,
   }) async {
+    final hasFocus = widget.focusNode.hasFocus;
     try {
+      widget.focusNode.unfocus();
       final XFile? image = await _imagePicker.pickImage(
         source: imageSource,
         maxHeight: config?.maxHeight,
@@ -367,9 +424,22 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
         String? updatedImagePath = await config?.onImagePicked!(imagePath);
         if (updatedImagePath != null) imagePath = updatedImagePath;
       }
+
       widget.onImageSelected(imagePath ?? '', '');
     } catch (e) {
       widget.onImageSelected('', e.toString());
+    } finally {
+      // To maintain the iOS native behavior of text field,
+      // When the user taps on the gallery icon, and the text field has focus,
+      // the keyboard should close.
+      // We need to request focus again to open the keyboard.
+      // This is not required for Android.
+      // This is a workaround for the issue where the keyboard remain open and overlaps the text field.
+
+      // https://github.com/SimformSolutionsPvtLtd/chatview/issues/266
+      if (imageSource == ImageSource.gallery && Platform.isIOS && hasFocus) {
+        widget.focusNode.requestFocus();
+      }
     }
   }
 

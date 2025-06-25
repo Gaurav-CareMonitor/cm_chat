@@ -22,12 +22,12 @@
 import 'dart:async';
 import 'dart:io' if (kIsWeb) 'dart:html';
 
-import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/widgets/chat_groupedlist_widget.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../chatview.dart';
+import '../extensions/extensions.dart';
+import 'chat_groupedlist_widget.dart';
 import 'reply_popup_widget.dart';
 
 class ChatListWidget extends StatefulWidget {
@@ -35,11 +35,11 @@ class ChatListWidget extends StatefulWidget {
     Key? key,
     required this.chatController,
     required this.assignReplyMessage,
-    required this.replyMessage,
     this.loadingWidget,
     this.loadMoreData,
     this.isLastPage,
     this.onChatListTap,
+    this.textFieldConfig,
   }) : super(key: key);
 
   /// Provides controller for accessing few function for running chat.
@@ -48,22 +48,22 @@ class ChatListWidget extends StatefulWidget {
   /// Provides widget for loading view while pagination is enabled.
   final Widget? loadingWidget;
 
-  /// Provides reply message when user swipe to chat bubble.
-  final ReplyMessage replyMessage;
-
   /// Provides callback when user actions reaches to top and needs to load more
   /// chat
-  final VoidCallBackWithFuture? loadMoreData;
+  final ValueGetter<Future<void>>? loadMoreData;
 
   /// Provides flag if there is no more next data left in list.
   final bool? isLastPage;
 
   /// Provides callback for assigning reply message when user swipe to chat
   /// bubble.
-  final MessageCallBack assignReplyMessage;
+  final ValueSetter<Message> assignReplyMessage;
 
   /// Provides callback when user tap anywhere on whole chat.
-  final VoidCallBack? onChatListTap;
+  final VoidCallback? onChatListTap;
+
+  /// Provides configuration for text field config.
+  final TextFieldConfiguration? textFieldConfig;
 
   @override
   State<ChatListWidget> createState() => _ChatListWidgetState();
@@ -142,7 +142,6 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                     isEnableSwipeToSeeTime:
                         featureActiveConfig?.enableSwipeToSeeTime ?? true,
                     assignReplyMessage: widget.assignReplyMessage,
-                    replyMessage: widget.replyMessage,
                     onChatBubbleLongPress: (yCoordinate, xCoordinate, message) {
                       if (featureActiveConfig?.enableReactionPopup ?? false) {
                         chatViewIW?.reactionPopupKey.currentState
@@ -161,6 +160,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                       }
                     },
                     onChatListTap: _onChatListTap,
+                    textFieldConfig: widget.textFieldConfig,
                   ),
                 ],
               );
@@ -245,8 +245,6 @@ class _ChatListWidgetState extends State<ChatListWidget> {
 
   @override
   void dispose() {
-    chatController.messageStreamController.close();
-    scrollController.dispose();
     _isNextPageLoading.dispose();
     super.dispose();
   }
