@@ -24,8 +24,12 @@ import 'dart:convert';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/models/models.dart';
 import 'package:chatview/src/widgets/cached_image.dart' show CachedImage;
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
+import '../extensions/extensions.dart';
+import '../models/config_models/image_message_configuration.dart';
+import '../models/config_models/message_reaction_configuration.dart';
 import 'reaction_widget.dart';
 import 'share_icon.dart';
 

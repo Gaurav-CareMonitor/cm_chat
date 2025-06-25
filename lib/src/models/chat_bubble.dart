@@ -19,11 +19,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../chatview.dart';
+import 'config_models/link_preview_configuration.dart';
+import 'config_models/receipts_widget_config.dart';
 
 class ChatBubble {
+  const ChatBubble({
+    this.color,
+    this.borderRadius,
+    this.textStyle,
+    this.padding,
+    this.margin,
+    this.linkPreviewConfig,
+    this.senderNameTextStyle,
+    this.receiptsWidgetConfig,
+    this.onMessageRead,
+  });
+
   /// Used for giving color of chat bubble.
   final Color? color;
 
@@ -53,17 +68,5 @@ class ChatBubble {
 
   /// Callback when a message has been displayed for the first
   /// time only
-  final Function(Message message)? onMessageRead;
-
-  const ChatBubble(
-      {this.color,
-      this.borderRadius,
-      this.textStyle,
-      this.padding,
-      this.margin,
-      this.linkPreviewConfig,
-      this.senderNameTextStyle,
-      this.receiptsWidgetConfig,
-      this.onMessageRead,
-      this.linkStyle});
+  final ValueSetter<Message>? onMessageRead;
 }

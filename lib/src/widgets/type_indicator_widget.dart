@@ -21,10 +21,13 @@
  */
 import 'dart:math';
 
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
 import '../extensions/extensions.dart';
+import '../models/chat_bubble.dart';
+import '../models/config_models/profile_circle_configuration.dart';
+import '../models/config_models/type_indicator_configuration.dart';
 import '../utils/constants/constants.dart';
 import 'profile_circle.dart';
 
@@ -251,7 +254,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
                   profileCircleConfiguration?.networkImageErrorBuilder,
               defaultAvatarImage:
                   profileCircleConfiguration?.defaultAvatarImage ??
-                      profileImage,
+                      Constants.profileImage,
               networkImageProgressIndicatorBuilder: profileCircleConfiguration
                   ?.networkImageProgressIndicatorBuilder,
             ),

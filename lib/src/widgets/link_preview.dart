@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 import 'package:any_link_preview/any_link_preview.dart';
-import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/models/config_models/link_preview_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../extensions/extensions.dart';
+import '../models/config_models/link_preview_configuration.dart';
 import '../utils/constants/constants.dart';
 
 class LinkPreview extends StatelessWidget {
@@ -77,20 +77,18 @@ class LinkPreview extends StatelessWidget {
                 titleStyle: linkPreviewConfig?.titleStyle,
               ),
             ),
-          } else ...{
-            if (url.isImageUrl)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: verticalPadding),
-                child: InkWell(
-                  onTap: _onLinkTap,
-                  child: Image.network(
-                    url,
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
-                  ),
+          } else if (url.isImageUrl) ...{
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: verticalPadding),
+              child: InkWell(
+                onTap: _onLinkTap,
+                child: Image.network(
+                  url,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
                 ),
-              ),
+              ),)
           },
           const SizedBox(height: verticalPadding),
           InkWell(
@@ -121,6 +119,6 @@ class LinkPreview extends StatelessWidget {
     final parsedUrl = Uri.parse(url);
     await canLaunchUrl(parsedUrl)
         ? await launchUrl(parsedUrl)
-        : throw couldNotLunch;
+        : throw couldNotLaunch;
   }
 }

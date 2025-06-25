@@ -1,26 +1,6 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:chatview/src/extensions/extensions.dart';
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../models/config_models/replied_message_configuration.dart';
@@ -55,8 +35,10 @@ class ReplyMessageWidget extends StatelessWidget {
     final replyBySender = message.replyMessage.replyBy?.id == currentUser?.id;
     final textTheme = Theme.of(context).textTheme;
     final replyMessage = message.replyMessage.message;
-    final messagedUser = message.replyMessage.replyBy;
-    final replyBy = replyBySender ? PackageStrings.you : messagedUser?.name;
+    final messagedUser =
+        chatController?.getUserFromId(message.replyMessage.replyBy);
+    final replyBy =
+        replyBySender ? PackageStrings.currentLocale.you : messagedUser?.name;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -73,7 +55,7 @@ class ReplyMessageWidget extends StatelessWidget {
               replyBySender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
-              "${PackageStrings.repliedBy} $replyBy",
+              "${PackageStrings.currentLocale.repliedBy} $replyBy",
               style: repliedMessageConfig?.replyTitleTextStyle ??
                   textTheme.bodyMedium!
                       .copyWith(fontSize: 14, letterSpacing: 0.3),

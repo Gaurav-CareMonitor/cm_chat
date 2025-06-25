@@ -19,13 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
-import 'enumeration.dart';
-
-typedef StringCallback = void Function(String);
 typedef StringMessageCallBack = void Function(
   String message,
   ReplyMessage replyMessage,
@@ -34,11 +30,10 @@ typedef StringMessageCallBack = void Function(
 typedef ReplyMessageWithReturnWidget = Widget Function(
   ReplyMessage? replyMessage,
 );
-typedef ReplyMessageCallBack = void Function(ReplyMessage replyMessage);
-typedef VoidCallBack = void Function();
-typedef DoubleCallBack = void Function(double, double);
-typedef MessageCallBack = void Function(Message message);
-typedef VoidCallBackWithFuture = Future<void> Function();
+typedef DoubleCallBack = void Function(
+  double yPosition,
+  double xPosition,
+);
 typedef StringsCallBack = void Function(String emoji, String messageId);
 typedef StringWithReturnWidget = Widget Function(String separator);
 typedef DragUpdateDetailsCallback = void Function(DragUpdateDetails);
@@ -70,23 +65,36 @@ typedef CustomViewForReplyMessage = Widget Function(
   BuildContext context,
   ReplyMessage state,
 );
-typedef GetMessageSeparator = (Map<int, DateTime>, DateTime);
-typedef AssetImageErrorBuilder = Widget Function(
-  BuildContext context,
-  Object error,
-  StackTrace? stackTrace,
+typedef GetMessageSeparator = (
+  Map<int, DateTime> messageSeparator,
+  DateTime dateTime,
 );
-typedef NetworkImageErrorBuilder = Widget Function(
-  BuildContext context,
-  String url,
-  Object error,
+typedef SelectedImageViewBuilder = Widget Function(
+  List<String> images,
+  ValueSetter<String> onImageRemove,
 );
-typedef NetworkImageProgressIndicatorBuilder = Widget Function(
-  BuildContext context,
-  String url,
-  DownloadProgress progress,
+typedef CustomMessageBuilder = Widget Function(Message message);
+typedef ReceiptBuilder = Widget Function(MessageStatus status);
+typedef LastSeenAgoBuilder = Widget Function(
+  Message message,
+  String formattedDate,
 );
-typedef SuggestionItemBuilder = Widget Function(
-  int index,
-  SuggestionItemData suggestionItemData,
+typedef ReplyPopupBuilder = Widget Function(
+  Message message,
+  bool sentByCurrentUser,
+);
+typedef ImagePickedCallback = Future<String?> Function(String? path);
+typedef OnMessageSwipeCallback = void Function(
+  String message,
+  String sentBy,
+);
+typedef ChatBubbleLongPressCallback = void Function(
+  double yCordinate,
+  double xCordinate,
+  Message message,
+);
+typedef ChatTextFieldViewBuilderCallback<T> = Widget Function(
+  BuildContext context,
+  T value,
+  Widget? child,
 );

@@ -19,12 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/src/models/models.dart';
-import 'package:flutter/material.dart';
 
 import '../../values/typedefs.dart';
+import '../models.dart';
 
 class MessageConfiguration {
+ 
+
   /// Provides configuration of image message appearance.
   final ImageMessageConfiguration? imageMessageConfig;
 
@@ -35,7 +36,7 @@ class MessageConfiguration {
   final EmojiMessageConfiguration? emojiMessageConfig;
 
   /// Provides builder to create view for custom messages.
-  final Widget Function(Message)? customMessageBuilder;
+  final CustomMessageBuilder? customMessageBuilder;
 
   /// Provides builder to create view for custom messages.
   final Widget Function(ChatAttachment, Message)? customAttachmentBuilder;

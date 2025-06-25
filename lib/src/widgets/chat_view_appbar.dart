@@ -25,7 +25,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../chatview.dart';
-import '../utils/constants/constants.dart';
 import 'profile_image_widget.dart';
 
 class ChatViewAppBar extends StatelessWidget {
@@ -44,7 +43,7 @@ class ChatViewAppBar extends StatelessWidget {
     this.padding,
     this.leading,
     this.showLeading = true,
-    this.defaultAvatarImage = profileImage,
+    this.defaultAvatarImage = Constants.profileImage,
     this.assetImageErrorBuilder,
     this.networkImageErrorBuilder,
     this.imageType = ImageType.network,
@@ -79,7 +78,7 @@ class ChatViewAppBar extends StatelessWidget {
   final double? elevation;
 
   /// Provides callback when user tap on back arrow.
-  final VoidCallBack? onBackPress;
+  final VoidCallback? onBackPress;
 
   /// Allow user to change padding in appbar.
   final EdgeInsets? padding;

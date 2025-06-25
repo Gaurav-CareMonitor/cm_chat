@@ -25,6 +25,13 @@ import 'package:chatview/src/widgets/message_time_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:linkify_plus/linkify_plus.dart';
 
+import 'package:chatview_utils/chatview_utils.dart';
+import 'package:flutter/material.dart';
+
+import '../extensions/extensions.dart';
+import '../models/chat_bubble.dart';
+import '../models/config_models/link_preview_configuration.dart';
+import '../models/config_models/message_reaction_configuration.dart';
 import '../utils/constants/constants.dart';
 import 'chat_view_inherited_widget.dart';
 import 'link_preview.dart';

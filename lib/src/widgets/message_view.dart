@@ -1,30 +1,21 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+
+
 import 'package:chatview/chatview.dart';
 import 'package:chatview/src/extensions/extensions.dart';
 import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
 import 'package:flutter/material.dart';
 
+
+import 'package:chatview_utils/chatview_utils.dart';
+import 'package:flutter/material.dart';
+
+import '../extensions/extensions.dart';
+import '../models/chat_bubble.dart';
+import '../models/config_models/message_configuration.dart';
+
 import '../utils/constants/constants.dart';
+import '../values/typedefs.dart';
+import 'chat_view_inherited_widget.dart';
 import 'image_message_view.dart';
 import 'reaction_widget.dart';
 import 'text_message_view.dart';
@@ -72,7 +63,7 @@ class MessageView extends StatefulWidget {
   final Duration? longPressAnimationDuration;
 
   /// Allow user to set some action when user double tap on chat bubble.
-  final MessageCallBack? onDoubleTap;
+  final ValueSetter<Message>? onDoubleTap;
 
   /// Allow users to pass colour of chat bubble when user taps on replied message.
   final Color highlightColor;
@@ -92,7 +83,7 @@ class MessageView extends StatefulWidget {
 
   final ChatController? controller;
 
-  final Function(int)? onMaxDuration;
+  final ValueSetter<int>? onMaxDuration;
 
   @override
   State<MessageView> createState() => _MessageViewState();
@@ -117,15 +108,16 @@ class _MessageViewState extends State<MessageView>
         upperBound: 0.1,
         lowerBound: 0.0,
       );
-      if (widget.message.status != MessageStatus.read &&
-          !widget.isMessageBySender) {
-        widget.inComingChatBubbleConfig?.onMessageRead?.call(widget.message);
-      }
+
       _animationController?.addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _animationController?.reverse();
         }
       });
+    }
+    if (widget.message.status != MessageStatus.read &&
+        !widget.isMessageBySender) {
+      widget.inComingChatBubbleConfig?.onMessageRead?.call(widget.message);
     }
   }
 

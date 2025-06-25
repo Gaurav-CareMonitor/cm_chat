@@ -1,240 +1,51 @@
-![Banner](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chatview/main/preview/banner.png)
+![Banner](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/chatview/main/preview/banner.png)
 
 # ChatView
+
 [![chatview](https://img.shields.io/pub/v/chatview?label=chatview)](https://pub.dev/packages/chatview)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SimformSolutionsPvtLtd/chatview/blob/main/LICENSE)
 
-A Flutter package that allows you to integrate Chat View with highly customization options such as one on one
-chat, group chat, message reactions, reply messages, link preview and configurations for overall view.
+ChatView is a Flutter package that allows you to integrate a highly customizable chat UI in your
+Flutter applications with [Flexible Backend Integration][chatViewConnect].
 
-For web demo visit [Chat View Example](https://simformsolutionspvtltd.github.io/flutter_chatview/).
+![Preview](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/chatview/main/preview/chatview.gif)
 
-## Preview
+## Features
 
-![The example app running in iOS](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chatview/main/preview/chatview.gif)
+- One-on-one and group chat support
+- Message reactions with emoji
+- Reply to messages functionality
+- Link preview for URLs
+- Voice messages support
+- Image sharing capabilities
+- Custom message types
+- Typing indicators
+- Reply suggestions
+- Message status indicators (sent, delivered, read)
+- Highly customizable UI components
+- Plug-and-play backend support using [chatview_connect][chatViewConnect]
 
-## Migration guide for release 2.0.0
+## Documentation
 
-- Renamed `sendBy` field to `sentBy` in `Message` class.
+Visit our [documentation](https://simform-flutter-packages.web.app/chatView) site for all
+implementation details, usage instructions, code examples, and advanced features.
 
-- Renamed `chatUsers` field to `otherUsers` in `ChatController` class.
+## Installation
 
-- Moved `currentUser` field from `ChatView` widget to `ChatController` class
-
-- Updated `id` value in `copyWith` method of `Message` to have correct value.
-
-- Removed `showTypingIndicator` field from `ChatView` and replaced it with `ChatController.showTypingIndicator`.
-
-  Before:
-    ```dart
-    ChatView(
-      showTypingIndicator:false,
-    ),
-    ```
-
-  After:
-    ```dart
-    /// use it with your [ChatController] instance.
-    _chatContoller.setTypingIndicator = true; // for showing indicator
-    _chatContoller.setTypingIndicator = false; // for hiding indicator
-    ```
-
-- Updated `ChatUser`, `Message` and `ReplyMessage` Data Model's `fromJson` and `toJson` methods:
-
-  ##### in `ChatUser.fromJson`:
-
-  Before:
-    ```dart
-    ChatUser.fromJson(
-      { 
-        ...
-        'imageType': ImageType.asset,
-        ...
-      },
-    ),
-    ```
-
-  After:
-    ```dart
-    ChatUser.fromJson(
-      {
-        ...
-        'imageType': 'asset',
-        ...
-      },
-    ),
-    ```
-
-  ##### in `ChatUser.toJson`:
-
-  Before:
-    ```dart
-    {
-      ...
-      imageType: ImageType.asset,
-      ...
-    }
-    ```
-
-  After:
-    ```dart
-    {
-      ...
-      imageType: asset,
-      ...
-    }
-    ```
-
-  ##### in `Message.fromJson`:
-
-  Before:
-    ```dart
-    Message.fromJson(
-      {
-        ...
-        'createdAt': DateTime.now(),
-        'message_type': MessageType.text,
-        'voice_message_duration': Duration(seconds: 5),
-        ...
-      }
-    )
-    ```
-
-  After:
-    ```dart
-    Message.fromJson(
-      {
-        ...
-        'createdAt': '2024-06-13T17:32:19.586412',
-        'message_type': 'text',
-        'voice_message_duration': '5000000',
-        ...
-      }
-    )
-    ```
-
-  ##### in `Message.toJson`:
-
-  Before:
-    ```dart
-    {
-      ...
-      createdAt: 2024-06-13 17:23:19.454789,
-      message_type: MessageType.text,
-      voice_message_duration: 0:00:05.000000,
-      ...
-    }
-    ```
-
-  After:
-    ```dart
-    {
-      ...
-      createdAt: 2024-06-13T17:32:19.586412,
-      message_type: text,
-      voice_message_duration: 5000000,
-      ...
-    }
-    ```
-
-  ##### in `ReplyMessage.fromJson`:
-
-  Before:
-    ```dart
-    ReplyMessage.fromJson(
-      {
-        ...
-        'message_type': MessageType.text,  
-        'voiceMessageDuration': Duration(seconds: 5),
-        ...
-      }
-    )
-    ```
-
-  After:
-    ```dart
-    ReplyMessage.fromJson(
-      {
-        ...
-        'message_type': 'text',  
-        'voiceMessageDuration': '5000000',
-        ...
-      }
-    )
-    ```
-
-  in `ReplyMessage.toJson`:
-
-  Before:
-    ```dart
-    {
-      ...
-      message_type: MessageType.text,
-      voiceMessageDuration: 0:00:05.000000,
-      ...
-    }
-    ```
-
-  After:
-    ```dart
-    {
-      ...
-      message_type: text,
-      voiceMessageDuration: 5000000,
-      ...
-    }
-    ```
-
-## Installing
-
-1.  Add dependency to `pubspec.yaml`
-
-```dart
+```yaml
 dependencies:
   chatview: <latest-version>
 ```
-*Get the latest version in the 'Installing' tab on [pub.dev](https://pub.dev/packages/chatview)*
 
-2.  Import the package
-```dart
-import 'package:chatview/chatview.dart';
-```
+## ChatView with Backend Support
 
-3. Adding a chat controller.
-```dart
-final chatController = ChatController(
-  initialMessageList: messageList,
-  scrollController: ScrollController(),
-  currentUser: ChatUser(id: '1', name: 'Flutter'),
-  otherUsers: [ChatUser(id: '2', name: 'Simform')],
-);
-```
+Make `ChatView` backend-ready with [chatview_connect][chatViewConnect]
 
-4. Adding a `ChatView` widget.
-```dart
-ChatView(
-  chatController: chatController,
-  onSendTap: onSendTap,
-  chatViewState: ChatViewState.hasMessages, // Add this state once data is available.
-)
-```
+- 🔌 Easy backend integration without boilerplate (🔥 Firebase)
+- ⚙️ Setup in 3 steps: set **Service Type** -> **User ID** and get **`ChatManager`**
+- 💬 Supports **1-on-1** and **group chats** with **media uploads** *(audio not supported).*
 
-5. Adding a messageList with `Message` class.
-```dart
-List<Message> messageList = [
-  Message(
-    id: '1',
-    message: "Hi",
-    createdAt: createdAt,
-    sentBy: userId,
-  ),
-  Message(
-    id: '2',
-    message: "Hello",
-    createdAt: createdAt,
-    sentBy: userId,
-  ),
-];
-```
+## Support
 
 6. Adding a `onSendTap`.
 ```dart
@@ -1059,25 +870,15 @@ Also, for whole example, check out the **example** app in the [example](https://
   </tr>
 </table>
 <br/>
+For questions, issues, or feature
+requests, [create an issue](https://github.com/SimformSolutionsPvtLtd/chatview/issues) on GitHub or
+reach out via the GitHub Discussions tab. We're happy to help and encourage community contributions.
+To contribute documentation updates specifically, please make changes to the doc/documentation.md
+file and submit a pull request.
 
 ## License
 
-```text
-MIT License
-Copyright (c) 2022 Simform Solutions
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+This project is licensed under the MIT License - see
+the [LICENSE](https://simform-flutter-packages.web.app/chatView/license).
+
+[chatViewConnect]: https://pub.dev/packages/chatview_connect
