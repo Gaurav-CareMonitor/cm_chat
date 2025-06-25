@@ -21,14 +21,41 @@
  */
 
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:chatview_utils/chatview_utils.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../values/typedefs.dart';
 
 class SendMessageConfiguration {
+  const SendMessageConfiguration({
+    this.textFieldConfig,
+    this.textFieldBackgroundColor,
+    this.imagePickerIconsConfig,
+    this.imagePickerConfiguration,
+    this.defaultSendButtonColor,
+    this.sendButtonIcon,
+    this.replyDialogColor,
+    this.replyTitleColor,
+    this.replyMessageColor,
+    this.closeIconColor,
+    this.allowRecordingVoice = true,
+    this.enableCameraImagePicker = true,
+    this.enableGalleryImagePicker = true,
+    this.voiceRecordingConfiguration,
+    this.micIconColor,
+    this.cancelRecordConfiguration,
+    this.shouldSendImageWithText = false,
+    this.removeImageIcon,
+    this.removeImageIconColor,
+    this.removeImageIconSize,
+    this.selectedImageMargin,
+    this.selectedImageViewHeight,
+    this.imageBorderRadius,
+    this.selectedImageViewBuilder,
+  });
+
   /// Used to give background color to text field.
   final Color? textFieldBackgroundColor;
 
@@ -77,27 +104,39 @@ class SendMessageConfiguration {
   /// Configuration for cancel voice recording
   final CancelRecordConfiguration? cancelRecordConfiguration;
 
-  const SendMessageConfiguration({
-    this.textFieldConfig,
-    this.textFieldBackgroundColor,
-    this.imagePickerIconsConfig,
-    this.imagePickerConfiguration,
-    this.defaultSendButtonColor,
-    this.sendButtonIcon,
-    this.replyDialogColor,
-    this.replyTitleColor,
-    this.replyMessageColor,
-    this.closeIconColor,
-    this.allowRecordingVoice = true,
-    this.enableCameraImagePicker = true,
-    this.enableGalleryImagePicker = true,
-    this.voiceRecordingConfiguration,
-    this.micIconColor,
-    this.cancelRecordConfiguration,
-  });
+  /// If true, then image will be sent with text message.
+  final bool shouldSendImageWithText;
+
+  /// Icon to remove image from text field.
+  final Widget? removeImageIcon;
+
+  /// Color of remove image icon.
+  final Color? removeImageIconColor;
+
+  /// Size of remove image icon.
+  final double? removeImageIconSize;
+
+  /// Margin around selected image in text field.
+  final EdgeInsets? selectedImageMargin;
+
+  /// Height of selected image view in text field.
+  final double? selectedImageViewHeight;
+
+  /// Border radius of selected image in text field.
+  final double? imageBorderRadius;
+
+  /// Provides ability to build custom view for selected images in text field.
+  final SelectedImageViewBuilder? selectedImageViewBuilder;
 }
 
 class ImagePickerIconsConfiguration {
+  const ImagePickerIconsConfiguration({
+    this.cameraIconColor,
+    this.galleryIconColor,
+    this.galleryImagePickerIcon,
+    this.cameraImagePickerIcon,
+  });
+
   /// Provides ability to pass custom gallery image picker icon.
   final Widget? galleryImagePickerIcon;
 
@@ -109,16 +148,28 @@ class ImagePickerIconsConfiguration {
 
   /// Used to give color to gallery icon.
   final Color? galleryIconColor;
-
-  const ImagePickerIconsConfiguration({
-    this.cameraIconColor,
-    this.galleryIconColor,
-    this.galleryImagePickerIcon,
-    this.cameraImagePickerIcon,
-  });
 }
 
 class TextFieldConfiguration {
+  const TextFieldConfiguration({
+    this.contentPadding,
+    this.maxLines,
+    this.borderRadius,
+    this.hintText,
+    this.hintStyle,
+    this.textStyle,
+    this.padding,
+    this.margin,
+    this.minLines,
+    this.textInputType,
+    this.onMessageTyping,
+    this.compositionThresholdTime = const Duration(seconds: 1),
+    this.inputFormatters,
+    this.textCapitalization,
+    this.enabled = true,
+    this.height,
+  });
+
   /// Used to give max lines in text field.
   final int? maxLines;
 
@@ -156,7 +207,7 @@ class TextFieldConfiguration {
   final TextCapitalization? textCapitalization;
 
   /// Callback when a user starts/stops typing a message by [TypeWriterStatus]
-  final void Function(TypeWriterStatus status)? onMessageTyping;
+  final ValueSetter<TypeWriterStatus>? onMessageTyping;
 
   /// After typing stopped, the threshold time after which the composing
   /// status to be changed to [TypeWriterStatus.composed].
@@ -168,26 +219,19 @@ class TextFieldConfiguration {
   /// Default is [true].
   final bool enabled;
 
-  const TextFieldConfiguration({
-    this.contentPadding,
-    this.maxLines,
-    this.borderRadius,
-    this.hintText,
-    this.hintStyle,
-    this.textStyle,
-    this.padding,
-    this.margin,
-    this.minLines,
-    this.textInputType,
-    this.onMessageTyping,
-    this.compositionThresholdTime = const Duration(seconds: 1),
-    this.inputFormatters,
-    this.textCapitalization,
-    this.enabled = true,
-  });
+  /// Used to give height of text field.
+  final double? height;
 }
 
 class ImagePickerConfiguration {
+  const ImagePickerConfiguration({
+    this.maxWidth,
+    this.maxHeight,
+    this.imageQuality,
+    this.preferredCameraDevice,
+    this.onImagePicked,
+  });
+
   /// Used to give max width of image.
   final double? maxWidth;
 
@@ -202,15 +246,7 @@ class ImagePickerConfiguration {
 
   /// Callback when image is picked from camera or gallery,
   ///  we can perform our task on image like adding crop options and return new image path
-  final Future<String?> Function(String? path)? onImagePicked;
-
-  const ImagePickerConfiguration({
-    this.maxWidth,
-    this.maxHeight,
-    this.imageQuality,
-    this.preferredCameraDevice,
-    this.onImagePicked,
-  });
+  final ImagePickedCallback? onImagePicked;
 }
 
 class VoiceRecordingConfiguration {
@@ -292,5 +328,5 @@ class CancelRecordConfiguration {
   final Color? iconColor;
 
   /// Provides callback on voice record cancel
-  final VoidCallBack? onCancel;
+  final VoidCallback? onCancel;
 }

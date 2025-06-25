@@ -19,17 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/chatview.dart';
-import 'package:chatview/src/inherited_widgets/configurations_inherited_widgets.dart';
-import 'package:chatview/src/widgets/chat_view_inherited_widget.dart';
-import 'package:chatview/src/widgets/profile_image_widget.dart';
-import 'package:chatview/src/widgets/suggestions/suggestions_config_inherited_widget.dart';
+
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../inherited_widgets/configurations_inherited_widgets.dart';
+import '../models/config_models/chat_bubble_configuration.dart';
+import '../models/config_models/message_list_configuration.dart';
+import '../models/config_models/reply_suggestions_config.dart';
 import '../utils/constants/constants.dart';
 import '../utils/emoji_parser.dart';
 import '../utils/package_strings.dart';
+import '../widgets/chat_view_inherited_widget.dart';
+import '../widgets/profile_image_widget.dart';
+import '../widgets/suggestions/suggestions_config_inherited_widget.dart';
 
 /// Extension for DateTime to get specific formats of dates and time.
 extension TimeDifference on DateTime {
@@ -46,9 +50,9 @@ extension TimeDifference on DateTime {
     final differenceInDays = currentDate.difference(targetDate).inDays;
 
     if (differenceInDays == 0) {
-      return PackageStrings.today;
+      return PackageStrings.currentLocale.today;
     } else if (differenceInDays <= 1 && differenceInDays >= -1) {
-      return PackageStrings.yesterday;
+      return PackageStrings.currentLocale.yesterday;
     } else {
       final DateFormat formatter = DateFormat(chatSeparatorDatePattern);
       return formatter.format(this);
@@ -130,11 +134,11 @@ extension ChatViewStateTitleExtension on String? {
       case ChatViewState.hasMessages:
         return this ?? '';
       case ChatViewState.noData:
-        return this ?? 'No Messages';
+        return this ?? PackageStrings.currentLocale.noMessage;
       case ChatViewState.loading:
         return this ?? '';
       case ChatViewState.error:
-        return this ?? 'Something went wrong !!';
+        return this ?? PackageStrings.currentLocale.somethingWentWrong;
     }
   }
 }

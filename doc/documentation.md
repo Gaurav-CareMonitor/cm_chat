@@ -22,6 +22,7 @@ Flutter applications with [Flexible Backend Integration](https://pub.dev/package
 - Connect ChatView to any backend
   using [chatview_connect](https://pub.dev/packages/chatview_connect)
 - And a wide range of configuration options to customize your chat.
+- Internationalization support
 
 For a live web demo, visit [Chat View Example](https://simformsolutionspvtltd.github.io/chatview/).
 
@@ -491,6 +492,81 @@ ChatView(
   },
   // ...
 )
+```
+
+## Internationalization
+ChatView supports internationalization (i18n) for various languages. You can set the locale using the `PackageString.setLocale('en')`.
+
+```dart
+PackageStrings.addLocaleObject(
+  'es',
+  const ChatViewLocale(
+    today: 'Hoy',
+    yesterday: 'Ayer',
+    repliedToYou: 'Te respondió',
+    repliedBy: 'Respondido por',
+    more: 'Más',
+    unsend: 'Desenviar',
+    reply: 'Responder',
+    replyTo: 'Responder a',
+    message: 'Mensaje',
+    reactionPopupTitle: 'Mantén presionado para multiplicar tu reacción',
+    photo: 'Foto',
+    send: 'Enviar',
+    you: 'Tú',
+    report: 'Reportar',
+  ),
+);
+
+PackageStrings.setLocale('es');
+```
+
+## Send Image With Message
+You can send images along with your messages by enabling the `shouldSendImageWithText` flag in `sendMessageConfig` all the other things will be handled by the package itself. Here's how to do it:
+
+```dart
+sendMessageConfig: SendMessageConfiguration(
+  shouldSendImageWithText: true, // Enable sending images with text
+),
+```
+
+You can also customize the view by using the `selectedImageViewBuilder` field of the `sendMessageConfig`:
+
+```dart
+sendMessageConfig: SendMessageConfiguration(
+  shouldSendImageWithText: true,
+  selectedImageViewBuilder: (images, onImageRemove) {
+    if (images.isNotEmpty) {
+      return SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        child: Stack(
+          children: [
+            Image.file(
+              File(images.first),
+              height: 100,
+            ),
+            Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+              icon: const Icon(
+                Icons.close,
+              ),
+              onPressed: () {
+                 onImageRemove.call(
+                  imagePath: images.first,
+                 );
+               },
+             ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  },
+),
 ```
 
 ## Backend Integration

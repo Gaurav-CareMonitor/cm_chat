@@ -35,37 +35,50 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   AppTheme theme = LightTheme();
   bool isDarkTheme = false;
-  final _chatController = ChatController(
-    initialMessageList: Data.messageList,
-    scrollController: ScrollController(),
-    currentUser: const ChatUser(
-      id: '1',
-      name: 'Flutter',
-      profilePhoto: Data.profileImage,
-    ),
-    otherUsers: const [
-      ChatUser(
-        id: '2',
-        name: 'Simform',
+  late final ChatController _chatController;
+
+  @override
+  void initState() {
+    super.initState();
+    _chatController = ChatController(
+      initialMessageList: Data.messageList,
+      scrollController: ScrollController(),
+      currentUser: const ChatUser(
+        id: '1',
+        name: 'Flutter',
         profilePhoto: Data.profileImage,
       ),
-      ChatUser(
-        id: '3',
-        name: 'Jhon',
-        profilePhoto: Data.profileImage,
-      ),
-      ChatUser(
-        id: '4',
-        name: 'Mike',
-        profilePhoto: Data.profileImage,
-      ),
-      ChatUser(
-        id: '5',
-        name: 'Rich',
-        profilePhoto: Data.profileImage,
-      ),
-    ],
-  );
+      otherUsers: const [
+        ChatUser(
+          id: '2',
+          name: 'Simform',
+          profilePhoto: Data.profileImage,
+        ),
+        ChatUser(
+          id: '3',
+          name: 'Jhon',
+          profilePhoto: Data.profileImage,
+        ),
+        ChatUser(
+          id: '4',
+          name: 'Mike',
+          profilePhoto: Data.profileImage,
+        ),
+        ChatUser(
+          id: '5',
+          name: 'Rich',
+          profilePhoto: Data.profileImage,
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    // ChatController should be disposed to avoid memory leaks
+    _chatController.dispose();
+    super.dispose();
+  }
 
   void _showHideTypingIndicator() {
     _chatController.setTypingIndicator = !_chatController.showTypingIndicator;
@@ -328,22 +341,26 @@ class _ChatScreenState extends State<ChatScreen> {
     ReplyMessage replyMessage,
     MessageType messageType,
   ) {
-    _chatController.addMessage(
-      Message(
-        id: DateTime.now().toString(),
-        createdAt: DateTime.now(),
-        message: message,
-        sentBy: _chatController.currentUser.id,
-        replyMessage: replyMessage,
-        messageType: messageType,
-      ),
+    final messageObj = Message(
+      id: DateTime.now().toString(),
+      createdAt: DateTime.now(),
+      message: message,
+      sentBy: _chatController.currentUser.id,
+      replyMessage: replyMessage,
+      messageType: messageType,
     );
+    _chatController.addMessage(
+      messageObj,
+    );
+
     Future.delayed(const Duration(milliseconds: 300), () {
-      _chatController.initialMessageList.last.setStatus =
+      final index = _chatController.initialMessageList.indexOf(messageObj);
+      _chatController.initialMessageList[index].setStatus =
           MessageStatus.undelivered;
     });
     Future.delayed(const Duration(seconds: 1), () {
-      _chatController.initialMessageList.last.setStatus = MessageStatus.read;
+      final index = _chatController.initialMessageList.indexOf(messageObj);
+      _chatController.initialMessageList[index].setStatus = MessageStatus.read;
     });
   }
 

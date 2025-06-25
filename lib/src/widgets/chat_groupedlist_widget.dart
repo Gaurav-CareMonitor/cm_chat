@@ -19,25 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/chatview.dart';
-import 'package:chatview/src/extensions/extensions.dart';
-import 'package:chatview/src/widgets/suggestions/suggestion_list.dart';
-import 'package:chatview/src/widgets/type_indicator_widget.dart';
+
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
+import '../extensions/extensions.dart';
+import '../models/config_models/feature_active_config.dart';
+import '../models/config_models/message_list_configuration.dart';
+import '../models/config_models/send_message_configuration.dart';
+import '../models/config_models/suggestion_list_config.dart';
+import '../values/enumeration.dart';
+import '../values/typedefs.dart';
 import 'chat_bubble_widget.dart';
 import 'chat_group_header.dart';
+import 'suggestions/suggestion_list.dart';
+import 'type_indicator_widget.dart';
 
 class ChatGroupedListWidget extends StatefulWidget {
   const ChatGroupedListWidget({
     Key? key,
     required this.showPopUp,
     required this.scrollController,
-    required this.replyMessage,
     required this.assignReplyMessage,
     required this.onChatListTap,
     required this.onChatBubbleLongPress,
     required this.isEnableSwipeToSeeTime,
+    this.textFieldConfig,
   }) : super(key: key);
 
   /// Allow user to swipe to see time while reaction pop is not open.
@@ -46,21 +53,21 @@ class ChatGroupedListWidget extends StatefulWidget {
   /// Pass scroll controller
   final ScrollController scrollController;
 
-  /// Provides reply message if actual message is sent by replying any message.
-  final ReplyMessage replyMessage;
-
   /// Provides callback for assigning reply message when user swipe on chat bubble.
-  final MessageCallBack assignReplyMessage;
+  final ValueSetter<Message> assignReplyMessage;
 
   /// Provides callback when user tap anywhere on whole chat.
-  final VoidCallBack onChatListTap;
+  final VoidCallback onChatListTap;
 
   /// Provides callback when user press chat bubble for certain time then usual.
-  final void Function(double, double, Message) onChatBubbleLongPress;
+  final ChatBubbleLongPressCallback onChatBubbleLongPress;
 
   /// Provide flag for turn on/off to see message crated time view when user
   /// swipe whole chat.
   final bool isEnableSwipeToSeeTime;
+
+  /// Provides configuration for text field.
+  final TextFieldConfiguration? textFieldConfig;
 
   @override
   State<ChatGroupedListWidget> createState() => _ChatGroupedListWidgetState();
@@ -85,29 +92,10 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
   ChatBackgroundConfiguration get chatBackgroundConfig =>
       chatListConfig.chatBackgroundConfig;
 
-  double chatTextFieldHeight = 0;
-
   @override
   void initState() {
     super.initState();
     _initializeAnimation();
-    updateChatTextFieldHeight();
-  }
-
-  @override
-  void didUpdateWidget(covariant ChatGroupedListWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    updateChatTextFieldHeight();
-  }
-
-  void updateChatTextFieldHeight() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      setState(() {
-        chatTextFieldHeight =
-            chatViewIW?.chatTextFieldViewKey.currentContext?.size?.height ?? 10;
-      });
-    });
   }
 
   void _initializeAnimation() {
@@ -191,9 +179,11 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
 
           // Adds bottom space to the message list, ensuring it is displayed
           // above the message text field.
-          SizedBox(
-            height: chatTextFieldHeight,
-          ),
+          if (chatViewIW case final chatViewIWNonNull?)
+            ValueListenableBuilder<double>(
+              valueListenable: chatViewIWNonNull.chatTextFieldHeight,
+              builder: (_, value, __) => SizedBox(height: value),
+            ),
         ],
       ),
     );

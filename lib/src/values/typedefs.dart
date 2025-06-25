@@ -19,10 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'package:chatview/chatview.dart';
+import 'package:chatview_utils/chatview_utils.dart';
 import 'package:flutter/material.dart';
 
-typedef StringCallback = void Function(String);
 typedef StringMessageCallBack = void Function(
   String message,
   ReplyMessage replyMessage,
@@ -31,11 +30,10 @@ typedef StringMessageCallBack = void Function(
 typedef ReplyMessageWithReturnWidget = Widget Function(
   ReplyMessage? replyMessage,
 );
-typedef ReplyMessageCallBack = void Function(ReplyMessage replyMessage);
-typedef VoidCallBack = void Function();
-typedef DoubleCallBack = void Function(double, double);
-typedef MessageCallBack = void Function(Message message);
-typedef VoidCallBackWithFuture = Future<void> Function();
+typedef DoubleCallBack = void Function(
+  double yPosition,
+  double xPosition,
+);
 typedef StringsCallBack = void Function(String emoji, String messageId);
 typedef StringWithReturnWidget = Widget Function(String separator);
 typedef DragUpdateDetailsCallback = void Function(DragUpdateDetails);
@@ -66,4 +64,36 @@ typedef CustomViewForReplyMessage = Widget Function(
   BuildContext context,
   ReplyMessage state,
 );
-typedef GetMessageSeparator = (Map<int, DateTime>, DateTime);
+typedef GetMessageSeparator = (
+  Map<int, DateTime> messageSeparator,
+  DateTime dateTime,
+);
+typedef SelectedImageViewBuilder = Widget Function(
+  List<String> images,
+  ValueSetter<String> onImageRemove,
+);
+typedef CustomMessageBuilder = Widget Function(Message message);
+typedef ReceiptBuilder = Widget Function(MessageStatus status);
+typedef LastSeenAgoBuilder = Widget Function(
+  Message message,
+  String formattedDate,
+);
+typedef ReplyPopupBuilder = Widget Function(
+  Message message,
+  bool sentByCurrentUser,
+);
+typedef ImagePickedCallback = Future<String?> Function(String? path);
+typedef OnMessageSwipeCallback = void Function(
+  String message,
+  String sentBy,
+);
+typedef ChatBubbleLongPressCallback = void Function(
+  double yCordinate,
+  double xCordinate,
+  Message message,
+);
+typedef ChatTextFieldViewBuilderCallback<T> = Widget Function(
+  BuildContext context,
+  T value,
+  Widget? child,
+);

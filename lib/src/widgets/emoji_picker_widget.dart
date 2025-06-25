@@ -20,13 +20,10 @@
  * SOFTWARE.
  */
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
-
-import 'package:flutter/material.dart';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-
-import '../values/typedefs.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 
 class EmojiPickerWidget extends StatelessWidget {
   const EmojiPickerWidget({
@@ -36,7 +33,7 @@ class EmojiPickerWidget extends StatelessWidget {
   }) : super(key: key);
 
   /// Provides callback when user selects emoji.
-  final StringCallback onSelected;
+  final ValueSetter<String> onSelected;
 
   /// Configuration for emoji picker sheet
   final Config? emojiPickerSheetConfig;
