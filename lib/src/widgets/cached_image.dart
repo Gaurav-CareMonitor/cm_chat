@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:extended_image/extended_image.dart';
@@ -165,8 +164,8 @@ class CachedImage extends StatelessWidget {
         if (filePath == null) {
           return _buildErrorWidget(errorWidget, width, height);
         }
-        return ExtendedImage.file(
-          File(filePath),
+        return ExtendedImage.network(
+          filePath,
           width: width,
           height: height,
           fit: fit,
@@ -392,8 +391,8 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
         initGestureConfigHandler: (state) => GestureConfig(inPageView: true),
       );
     } else if (widget.sourceFile != null) {
-      image = ExtendedImage.file(
-        File(widget.sourceFile!),
+      image = ExtendedImage.network(
+        widget.sourceFile ?? "",
         fit: widget.fit,
         enableSlideOutPage: true,
         mode: ExtendedImageMode.gesture,
